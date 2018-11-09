@@ -37,9 +37,10 @@ class StaticChecker(BaseVisitor,Utils):
         return self.visit(self.ast,StaticChecker.global_envi)
 
     def checkRedeclared(self,sym,kind,env):
-        if self.lookup(sym.name,env,lambda x: x.name):
+        if self.lookup(sym.name.lower(),env,lambda x: x.name):
             raise Redeclared(kind,sym.name)
         else: 
+            sym.name = sym.name.lower()
             return sym
 
     def visitProgram(self, ast, c): 
@@ -66,7 +67,9 @@ class StaticChecker(BaseVisitor,Utils):
         param = reduce(lambda x,y: x + [self.visit(y,(x,False))], ast.param, [])
         local_var = reduce(lambda x,y: x + [self.visit(y,(x,True))], ast.local, param)
         env = [local_var + c[1] + c[0],ast.returnType,False]
-        stmt = list(map(lambda x: self.visit(x,env), ast.body))  
+        stmt = list(map(lambda x: self.visit(x,env), ast.body)) 
+        if True not in stmt and ast.name.name != 'main' and type(kind) is Function :
+            raise FunctionNotReturn(ast.name.name) 
         return self.checkRedeclared(Symbol(ast.name.name,MType([i.varType for i in ast.param],ast.returnType)),kind,c[0])
 
     def checkSameArray(self,a,b):
@@ -110,6 +113,8 @@ class StaticChecker(BaseVisitor,Utils):
         elif ast.op in ['+','-','*','/']:
             if left_type is IntType or left_type is FloatType:
                 if right_type is IntType:
+                    if ast.op =='/':
+                        return FloatType()
                     return self.visit(ast.left,c)
                 elif right_type is FloatType:
                     return FloatType()
@@ -143,7 +148,6 @@ class StaticChecker(BaseVisitor,Utils):
     
     def visitCallExpr(self, ast, c):
         at = [self.visit(x,c) for x in ast.param]
-        
         res = self.lookup(ast.method.name,c,lambda x: x.name)
         if res is None or not type(res.mtype) is MType or type(res.mtype.rettype) is VoidType:
             raise Undeclared(Function(),ast.method.name)
@@ -153,9 +157,8 @@ class StaticChecker(BaseVisitor,Utils):
             for a,b in zip(at,res.mtype.partype):
                 if type(a) == ArrayType:
                     if not self.checkSameArray(a,b):
-                        raise TypeMismatchInExpression(ast)      
-        else:
-            return res.mtype.rettype
+                        raise TypeMismatchInExpression(ast)
+        return res.mtype.rettype
     
     def visitId(self,ast,c):
         res = self.lookup(ast.name,c,lambda x: x.name)
@@ -181,36 +184,50 @@ class StaticChecker(BaseVisitor,Utils):
             raise TypeMismatchInStatement(ast)
         else:
             if (type(rhs) is IntType and type(lhs) is FloatType) or type(rhs) == type(lhs):
-                return True
+                return False
             elif type(rhs) != type(lhs):
                 raise TypeMismatchInStatement(ast)
 
     def visitWith(self, ast, c):
         local_var = reduce(lambda x,y: x + [self.visit(y,(x,True))], ast.decl, [])
-        env = local_var + c[0]
-        return True
+        c[0] = local_var + c[0]
+        stmt = list(map(lambda x: self.visit(x,c), ast.stmt)) 
+        return False
 
     def visitIf(self, ast, c):
         if type(self.visit(ast.expr,c[0])) is not BoolType:
             raise TypeMismatchInStatement(ast)
-        stmt = [self.visit(x,c) for x in ast.thenStmt]
-
+        thenStmt = [self.visit(x,c) for x in ast.thenStmt]
+        elseStmt = [self.visit(x,c) for x in ast.elseStmt]
+        print(thenStmt)
+        print(elseStmt)
+        if (True in thenStmt) and (True in elseStmt):
+            return True
+        else:
+            return False
+        
     def visitFor(self, ast, c):
         if True in [type(a) != IntType for a in [self.visit(ast.id,c[0]), self.visit(ast.expr1,c[0]), self.visit(ast.expr2,c[0])]]:
             raise TypeMismatchInStatement(ast)
+        loop = [self.visit(x,[c[0],c[1],True]) for x in ast.loop]
+        return False
 
     def visitContinue(self, ast, c):
         if c[2] != True:
             raise ContinueNotInLoop()
+        return False
     def visitBreak(self, ast, c):
         if c[2] != True:
             raise BreakNotInLoop()
+        return False
 
     def visitReturn(self, ast, c):
         if type(c[1]) is VoidType:
             if ast.expr is not None:
                 raise TypeMismatchInStatement(ast)
         elif type(c[1]) != type(self.visit(ast.expr,c[0])):
+            if type(c[1]) is FloatType and type(self.visit(ast.expr,c[0])) == IntType:
+                return True
             raise TypeMismatchInStatement(ast)
         elif type(c[1]) is ArrayType:
             if not self.checkSameArray(c[1],self.visit(ast.expr,c[0])):
@@ -220,6 +237,8 @@ class StaticChecker(BaseVisitor,Utils):
     def visitWhile(self, ast, c):
         if type(self.visit(ast.exp,c[0])) is not BoolType:
             raise TypeMismatchInStatement(ast)
+        loop = [self.visit(x,[c[0],c[1],True]) for x in ast.sl]
+        return False
 
     def visitIntLiteral(self,ast, c): 
         return IntType()

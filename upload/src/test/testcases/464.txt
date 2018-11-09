@@ -1,0 +1,25 @@
+
+                var a: real;
+
+                procedure main();
+                var i,j:real;
+                k:boolean;
+                a:string;
+                b:array[1 .. 5] of integer;
+                d:string;
+                begin
+                i := foo(b[10]);
+                end
+
+                function foo(a:integer):integer;
+                var c:array[1 .. 5] of integer;
+                begin
+                    with b:integer; do
+                    begin 
+                        if b < 3 then b:= foo(c) ;
+                        else begin 
+                            for b := 1 to b do return 3;
+                        end                            
+                    end
+                end
+            

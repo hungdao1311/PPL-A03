@@ -1,21 +1,8 @@
 
-        
-var conbocuoi1:integer;
-
-procedure conbocuoi2();
-begin
-    return;
-end
-
-procedure conbocuoi2();
-begin
-    return;
-end
-
-procedure main(); 
-var conbocuoi1:integer;
-    conbocuoi2:real;
-    conbocuoi3:string;
-begin 
-    return;
-end
+                procedure main();
+                var
+                    a: real;
+                begin
+                    a := (((5 <> 6) < (6 = 5)) >= (4 + 5 > 1)) <= 1 ;
+                end
+                

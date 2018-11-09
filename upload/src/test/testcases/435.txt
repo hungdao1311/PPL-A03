@@ -1,0 +1,15 @@
+
+                var a: real;
+                procedure main();
+                var i,j:integer;
+                k:boolean;
+                begin
+                a:= foo();
+                end
+                function foo():real;
+                var a:boolean;
+                begin
+                if a then return 1;
+                else return a;
+                end
+            

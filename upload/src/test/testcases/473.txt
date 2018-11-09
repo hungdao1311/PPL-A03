@@ -1,0 +1,22 @@
+
+                var a: real;
+
+                procedure main();
+                var j:real;
+                i:integer;
+                k:boolean;
+                a:string;
+                b:array[1 .. 5] of integer;
+                d:string;
+                begin
+                for i := 4 to 5 do
+                begin
+                    if i < 3 then continue;
+                    else
+                    begin
+                        for i := 4 to 5 do break;
+                    end
+                end
+                if i < 3 then break;
+                end
+            

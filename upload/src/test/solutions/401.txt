@@ -1,1 +1,1 @@
-Redeclared Variable: conbocuoi1
+Type Mismatch In Statement: CallStmt(Id(putIntLn),[])

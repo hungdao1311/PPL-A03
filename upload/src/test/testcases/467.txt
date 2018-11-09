@@ -1,0 +1,20 @@
+
+                var a: real;
+
+                procedure main();
+                var i,j:real;
+                k:boolean;
+                a:string;
+                b:array[1 .. 5] of integer;
+                d:string;
+                begin
+                i := foo(b[10]);
+                end
+
+                function foo(b:integer):integer;
+                var a:array[1 .. 5] of integer;
+                begin
+                    if b>3 then b:= b + foo(b+1);
+                    else b := foo(b+1);
+                end
+            

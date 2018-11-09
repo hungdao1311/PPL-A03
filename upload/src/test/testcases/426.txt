@@ -1,0 +1,8 @@
+
+                var a: real;
+                procedure main();
+                var i,j:integer;
+                begin
+                    if i then j := i;
+                end
+            

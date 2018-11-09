@@ -1,0 +1,9 @@
+
+                var a: real;
+                procedure main();
+                var i,j:integer;
+                k:boolean;
+                begin
+                    return 3;
+                end
+            

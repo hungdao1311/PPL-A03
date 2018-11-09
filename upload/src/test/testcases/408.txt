@@ -1,31 +1,9 @@
 
-        
-var conbocuoi4:integer;
-
-procedure conbocuoi2();
-begin
-    return;
-end
-
-function conbocuoi3():integer;
-begin
-    return 10;
-end
-
-function conbocuoi4():integer;
-begin
-    return 100;
-end
-
-procedure main(); 
-var conbocuoi1:integer;
-    conbocuoi2:real;
-    conbocuoi2:string;
-begin
-    return;
-end
-
-procedure conbocuoi4();
-begin
-    return;
-end
+                var a: integer;
+                procedure main();
+                var
+                    a: real;
+                begin
+                    a := b + 2 + n or 4 + 5 - g or 2 - 9;
+                end
+                

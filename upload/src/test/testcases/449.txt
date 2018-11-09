@@ -1,0 +1,13 @@
+
+                var a: real;
+                procedure main();
+                var i,j:real;
+                k:boolean;
+                a:string;
+                b:array[1 .. 5] of integer;
+                d:integer;
+                begin
+                i := j := b[2*i];
+                end
+                
+            

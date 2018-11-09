@@ -1,0 +1,18 @@
+
+                var a: string;
+                var k:string;
+                var b:real;
+                procedure main();
+                var i,j:real;
+                K:boolean;
+                A:string;
+                B:array[1 .. 5] of integer;
+                d:integer;
+                begin
+                i := j := b[1];
+                end
+                procedure foo(a:integer);
+                var A:string;
+                begin
+                end
+            
