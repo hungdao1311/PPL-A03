@@ -1,0 +1,1 @@
+Type Mismatch In Statement: For(Id(conbocuoi3)StringLiteral(conbocuoi1),Id(conbocuoi2),True,[AssignStmt(Id(conbocuoi2),BinaryOp(+,Id(conbocuoi2),FloatLiteral(1.0)))])

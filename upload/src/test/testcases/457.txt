@@ -1,24 +1,39 @@
 
-                var a: real;
-                procedure main();
-                var i,j:real;
-                k:boolean;
-                a:string;
-                b:array[1 .. 5] of integer;
-                d:integer;
-                begin
-                d := ((d+1*2)+3*4) div 5;
-                i := i*2+4/5+6-1;
-                i := d/4;
-                i := d;
-                k := d > foo()*6;
-                k := k and not k and then b[2] > i or else b[2] < 5;
-                d := -d;
-                k := not k;
-                d := d*2.5;
-                end
-                function foo():integer;
-                begin
-                return 3;
-                end
-            
+var conbocuoi4:integer;
+    conbocuoi5:boolean;
+
+function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):array [1 .. 100] of string;
+var conbocuoi4:boolean;
+    conbocuoi5, conbocuoi:integer;
+    conbocuoi6:array [1 .. 100] of string;
+    conbocuoi7:array [1 .. 200] of integer;
+begin
+    return conbocuoi6;
+end
+
+function conbocuoi8(conbocuoi1:string; conbocuoi2:integer):array [1 .. 100] of string;
+var conbocuoi4:boolean;
+    conbocuoi5, conbocuoi:integer;
+    conbocuoi6:array [1 .. 100] of string;
+    conbocuoi7:array [1 .. 200] of integer;
+begin
+    return conbocuoi7;
+end
+
+procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
+var conbocuoi, conbocuoi7:integer;
+    conbocuoi3:boolean;
+begin
+
+    return;
+end
+
+procedure main(); 
+var conbocuoi:integer;
+    conbocuoi2:real;
+    conbocuoi1:boolean;
+begin
+    conbocuoi := conbocuoi3("conbocuoi", conbocuoi);
+    conbocuoi2 := conbocuoi3("conbocuoi", conbocuoi);
+    return;
+end

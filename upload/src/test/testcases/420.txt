@@ -1,23 +1,20 @@
 
-                var a: real;
+var conbocuoi4:integer;
 
-                procedure main();
-                var a: real;
-                b:real;
-                i,j:integer;
-                begin
-                    for i := 1 to 10 do begin
-                        for j := i downto 1 do
-                            if (i + j) mod 2 = 1 then break;
-                    continue;
-                    end
-                end
+function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
+begin
+    return conbocuoi4;
+end
 
-                procedure b();
-                var a: real;
-                begin 
-                    with wi,wi:integer; do 
-                    begin
-                    end
-                end
-                
+procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
+begin
+    return;
+end
+
+procedure main(); 
+var
+    conbocuoi2:real;
+begin
+    conbocuoi1 := 1;
+    return;
+end

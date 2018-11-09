@@ -1,1 +1,1 @@
-Redeclared Variable: wi
+Undeclared Identifier: conbocuoi1

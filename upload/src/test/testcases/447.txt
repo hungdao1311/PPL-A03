@@ -1,0 +1,35 @@
+
+var conbocuoi4:integer;
+    conbocuoi5:boolean;
+
+function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
+var conbocuoi4:boolean;
+    conbocuoi5, conbocuoi:integer;
+begin
+    while (conbocuoi4 and True) do
+        break;
+    while (conbocuoi4 and not conbocuoi4 or conbocuoi4) do
+        continue;
+    return conbocuoi2;
+end
+
+procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
+var conbocuoi, conbocuoi7:integer;
+    conbocuoi3:boolean;
+begin
+    while (conbocuoi7 + conbocuoi) do
+        break;
+    
+    return;
+end
+
+procedure main(); 
+var conbocuoi3:integer;
+    conbocuoi2:real;
+    conbocuoi1:boolean;
+begin
+    while (conbocuoi1) do
+        break;
+        
+    return;
+end

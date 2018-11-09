@@ -1,1 +1,1 @@
-Type Mismatch In Statement: CallStmt(Id(foo),[Id(i),Id(j),Id(k)])
+Type Mismatch In Statement: For(Id(conbocuoi3)BinaryOp(/,IntLiteral(1),IntLiteral(1)),Id(conbocuoi2),True,[AssignStmt(Id(conbocuoi2),BinaryOp(+,Id(conbocuoi2),FloatLiteral(1.0)))])

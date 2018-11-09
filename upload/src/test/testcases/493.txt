@@ -1,0 +1,27 @@
+
+function conbocuoi1(conbocuoi:integer):integer;
+begin
+    return 10;
+end
+
+procedure conbocuoi2(conbocuoi:integer);
+begin
+    for conbocuoi := 1 to 100 do
+    begin
+        conbocuoi := 10;
+        if conbocuoi < 10 then
+            break;
+        if conbocuoi > 10 then
+            continue;
+        
+        conbocuoi := 20;
+        
+    end
+    return;
+end
+
+procedure main();
+begin
+    break;
+    return;
+end

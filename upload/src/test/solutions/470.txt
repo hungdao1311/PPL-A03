@@ -1,1 +1,1 @@
-Continue Not In Loop
+Type Mismatch In Expression: BinaryOp(-,Id(c1),Id(c3))

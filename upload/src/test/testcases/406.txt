@@ -1,9 +1,21 @@
 
-            procedurE foo (b : real) ;
-            begin
-             1[1] := 1;
-             (1>=0)[2] := 2+a[1][1]+c+("abc"< 0);
-             ahihi(1)[m+1] := 3;
-             (1+a[1]+(1<0))[10] := 4;
-            End
-            
+        
+var conbocuoi1:integer;
+
+procedure conbocuoi2();
+begin
+    return;
+end
+
+function conbocuoi2():integer;
+begin
+    return 10;
+end
+
+procedure main(); 
+var conbocuoi1:integer;
+    conbocuoi2:real;
+    conbocuoi2:string;
+begin 
+    return;
+end

@@ -1,1 +1,1 @@
-Type Mismatch In Expression: BinaryOp(<,BinaryOp(<>,IntLiteral(5),IntLiteral(6)),BinaryOp(=,IntLiteral(6),IntLiteral(5)))
+Redeclared Procedure: conbocuoi2

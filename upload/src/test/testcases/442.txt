@@ -1,0 +1,45 @@
+
+var conbocuoi4:integer;
+    conbocuoi5:boolean;
+
+function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
+var conbocuoi4:boolean;
+    conbocuoi5, conbocuoi:integer;
+begin
+    for conbocuoi := conbocuoi5 downto conbocuoi5 - 100 do
+    begin
+        conbocuoi6(conbocuoi5, True);
+        break;
+    end
+    conbocuoi2 := 123;
+    
+    return conbocuoi2;
+end
+
+procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
+var conbocuoi, conbocuoi7:integer;
+begin
+    while conbocuoi6 do
+    begin
+        conbocuoi5 := conbocuoi5 + 10;
+        if conbocuoi6 or else not conbocuoi6 then
+            return;
+        continue;
+    end
+    for conbocuoi := 1 to conbocuoi5 do
+        for conbocuoi7 := conbocuoi + 1 to conbocuoi5 + 100 do
+            continue;
+    return;
+end
+
+procedure main(); 
+var conbocuoi3:integer;
+    conbocuoi2:real;
+begin
+
+    for conbocuoi3 := 10 downto -10 do
+        for conbocuoi3 := 1 to 1000 do
+            for conbocuoi2 := 1 to 10 do
+                break;
+    return;
+end

@@ -1,4 +1,5 @@
 
+        
 var conbocuoi1, conbocuoi2:integer;
 
 function conbocuoi1(hihi:integer):integer;

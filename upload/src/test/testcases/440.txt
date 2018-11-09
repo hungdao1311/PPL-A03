@@ -1,13 +1,35 @@
 
-                var a: real;
-                procedure main();
-                var i,j:integer;
-                k:boolean;
-                begin
-                end
-                function foo():array [1 .. 5] of integer;
-                var a:array[1 .. 6] of integer;
-                begin
-                return a ;
-                end
-            
+var conbocuoi4:integer;
+    conbocuoi5:boolean;
+
+function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
+var conbocuoi4:boolean;
+    conbocuoi5:integer;
+begin
+    conbocuoi2 := 123;
+    
+    return conbocuoi2;
+end
+
+procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
+begin
+    while conbocuoi6 do
+    begin
+        conbocuoi5 := conbocuoi5 + 10;
+        if conbocuoi6 or else not conbocuoi6 then
+            return;
+        continue;
+    end
+    return;
+end
+
+procedure main(); 
+var conbocuoi3:integer;
+    conbocuoi2:real;
+begin
+    for conbocuoi3 := 1 to True do
+    begin
+        conbocuoi2 := conbocuoi2 + 1.0;
+    end
+    return;
+end

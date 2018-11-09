@@ -1,1 +1,1 @@
-Type Mismatch In Statement: For(Id(a)IntLiteral(1),IntLiteral(10),True,[For(Id(j)Id(i),IntLiteral(1),False,[If(BinaryOp(=,BinaryOp(mod,BinaryOp(+,Id(i),Id(j)),IntLiteral(1)),IntLiteral(1)),[Break],[])])])
+Undeclared Function: conbocuoi1

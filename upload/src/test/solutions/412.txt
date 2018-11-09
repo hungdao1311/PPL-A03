@@ -1,1 +1,1 @@
-Type Mismatch In Statement: AssignStmt(Id(a),BinaryOp(orelse,BinaryOp(orelse,BinaryOp(andthen,BooleanLiteral(True),BooleanLiteral(False)),BooleanLiteral(True)),BooleanLiteral(False)))
+Redeclared Procedure: conbocuoi3

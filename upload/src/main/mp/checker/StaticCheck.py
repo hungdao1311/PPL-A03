@@ -237,6 +237,8 @@ class StaticChecker(BaseVisitor,Utils):
         elif type(c[1]) is ArrayType:
             if not self.checkSameArray(c[1],self.visit(ast.expr,c[0])):
                 raise TypeMismatchInStatement(ast)
+            else: 
+                return True
         else:
             return True
     def visitWhile(self, ast, c):

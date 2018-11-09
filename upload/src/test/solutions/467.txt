@@ -1,1 +1,1 @@
-Function foo Not Return 
+Type Mismatch In Expression: ArrayCell(Id(conbocuoi3),BinaryOp(/,IntLiteral(3),IntLiteral(3)))

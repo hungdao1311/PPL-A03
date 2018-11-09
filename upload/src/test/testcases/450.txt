@@ -1,13 +1,29 @@
 
-                var a: real;
-                procedure main();
-                var i,j:real;
-                k:boolean;
-                a:string;
-                b:array[1 .. 5] of integer;
-                d:integer;
-                begin
-                i := j := a[2*d];
-                end
-                
-            
+var conbocuoi4:integer;
+    conbocuoi5:boolean;
+
+function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
+var conbocuoi4:boolean;
+    conbocuoi5, conbocuoi:integer;
+begin
+
+    return conbocuoi2;
+end
+
+procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
+var conbocuoi, conbocuoi7:integer;
+    conbocuoi3:boolean;
+begin
+    
+    return;
+end
+
+procedure main(); 
+var conbocuoi3:integer;
+    conbocuoi2:real;
+    conbocuoi1:boolean;
+begin
+    conbocuoi2 := conbocuoi3;
+    conbocuoi3 := conbocuoi2;
+    return;
+end

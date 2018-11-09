@@ -1,8 +1,20 @@
 
-                var a: real;
-                procedure main();
-                var i,j:integer;
-                begin
-                    while i do j := i;
-                end
-            
+var conbocuoi5:integer;
+
+function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
+begin
+    return conbocuoi4(100);
+end
+
+procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
+begin
+    return;
+end
+
+procedure main(); 
+var conbocuoi3:integer;
+    conbocuoi2:real;
+begin
+    conbocuoi2 := 10;
+    return;
+end

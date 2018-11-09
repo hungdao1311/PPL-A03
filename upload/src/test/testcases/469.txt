@@ -1,26 +1,15 @@
 
-                var a: real;
-
-                procedure main();
-                var i,j:real;
-                k:boolean;
-                a:string;
-                b:array[1 .. 5] of integer;
-                d:string;
-                begin
-                i := foo(b[10]);
-                end
-
-                function foo(b:integer):integer;
-                var a:array[1 .. 5] of integer;
-                begin
-                    if b>3 then 
-                    begin
-                        with a,b:integer;do 
-                        begin
-                            if b < 4 then return foo(3);
-                            else break;
-                        end
-                    end
-                end
-            
+procedure main(); 
+var conbocuoi1:array [1 .. 100] of integer;
+    conbocuoi2:array [1 .. 100] of real;
+    conbocuoi3:array [1 .. 100] of boolean;
+    c1:integer;
+    c2:real;
+    c3:boolean;
+    c4:string;
+begin
+    c1 := conbocuoi1[1];
+    c2 := conbocuoi2[2];
+    c3 := c1[3];
+    return;
+end

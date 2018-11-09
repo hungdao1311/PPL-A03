@@ -1,25 +1,22 @@
 
-                var a: real;
+var conbocuoi4:integer;
+    conbocuoi5:boolean;
 
-                procedure main();
-                var i,j:real;
-                k:boolean;
-                a:string;
-                b:array[1 .. 5] of integer;
-                d:string;
-                begin
-                i := foo(b[10]);
-                end
+procedure conbocuoi6(conbocuoi5:string);
+var conbocuoi, conbocuoi7:integer;
+    conbocuoi3:boolean;
+begin
 
-                function foo(a:integer):integer;
-                var c:array[1 .. 5] of integer;
-                begin
-                    with b:integer; do
-                    begin 
-                        if b < 3 then b:= foo(c) ;
-                        else begin 
-                            for b := 1 to b do return 3;
-                        end                            
-                    end
-                end
-            
+    return;
+end
+
+procedure main(); 
+var conbocuoi:integer;
+    conbocuoi2:real;
+    conbocuoi1:boolean;
+begin
+    conbocuoi6("123123123");
+    conbocuoi6("buon ngu qua hu hu");
+    conbocuoi6(conbocuoi, "hehe");
+    return;
+end

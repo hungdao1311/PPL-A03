@@ -1,1 +1,1 @@
-Type Mismatch In Statement: While(Id(i),[AssignStmt(Id(j),Id(i))])
+Undeclared Function: conbocuoi4

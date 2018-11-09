@@ -1,35 +1,31 @@
 
-                procedure main();
-                var a: real;
-                b:real;
-                c: integer;
-                d: real;
-                e,g,h: real;
-                begin
-                    if a = 1 then begin
-                        if b > 3 then c := 5;
-                        else d := 1;
+        
+var conbocuoi4:integer;
 
-                        if e < 4 then ok();
-                    end else begin
-                        if h > 5 then ok(); else lyo();
-                        g := 5;
-                    end 
-                    return ;
-                end
-                
-                procedure ok();
-                begin 
-                end 
-                
-                function test():boolean;
-                var a:integer;
-                begin 
-                    if a = 1 then return 3;
-                    else return true;
-                end
+function conbocuoi3():integer;
+begin
+    return conbocuoi4();
+end
 
-                procedure lyo();
-                begin
-                end
-                
+function conbocuoi6():integer;
+begin
+    return 100;
+end
+
+procedure conbocuoi5();
+begin
+    return;
+end
+
+procedure conbocuoi5();
+begin
+    return;
+end
+
+procedure main(); 
+var conbocuoi1:integer;
+    conbocuoi2:real;
+    conbocuoi3:string;
+begin
+    return;
+end
