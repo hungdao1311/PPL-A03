@@ -1,1 +1,1 @@
-Redeclared Procedure: foo
+Undeclared Identifier: n

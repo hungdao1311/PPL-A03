@@ -24,10 +24,17 @@ class Symbol:
 
 class StaticChecker(BaseVisitor,Utils):
 
-    global_envi = [Symbol("getInt",MType([],IntType())),
-    			   Symbol("putIntLn",MType([IntType()],VoidType())),
-                   Symbol("putFloatLn",MType([FloatType()],VoidType())),
-                   Symbol("testPrintArr",MType([ArrayType(3,5,IntType())],VoidType()))]
+    global_envi = [Symbol("getint",MType([],IntType())),
+                   Symbol("putint",MType([IntType()],VoidType())),
+    			   Symbol("putintln",MType([IntType()],VoidType())),
+                   Symbol("getfloat",MType([],FloatType())),
+                   Symbol("putfloat",MType([FloatType()],VoidType())),
+                   Symbol("putfloatln",MType([FloatType()],VoidType())),
+                   Symbol("putbool",MType([BoolType()],VoidType())),
+                   Symbol("putboolln",MType([BoolType()],VoidType())),
+                   Symbol("putstring",MType([StringType()],VoidType())),
+                   Symbol("puttringln",MType([StringType()],VoidType())),
+                   Symbol("putln",MType([],VoidType()))]
             
     
     def __init__(self,ast):
@@ -68,7 +75,7 @@ class StaticChecker(BaseVisitor,Utils):
         local_var = reduce(lambda x,y: x + [self.visit(y,(x,True))], ast.local, param)
         env = [local_var + c[1] + c[0],ast.returnType,False]
         stmt = list(map(lambda x: self.visit(x,env), ast.body)) 
-        if True not in stmt and ast.name.name != 'main' and type(kind) is Function :
+        if True not in stmt and type(kind) is Function :
             raise FunctionNotReturn(ast.name.name) 
         return self.checkRedeclared(Symbol(ast.name.name,MType([i.varType for i in ast.param],ast.returnType)),kind,c[0])
 
@@ -78,7 +85,7 @@ class StaticChecker(BaseVisitor,Utils):
     def visitCallStmt(self, ast, c): 
         at = [self.visit(x,c[0]) for x in ast.param]
 
-        res = self.lookup(ast.method.name,c[0],lambda x: x.name)
+        res = self.lookup(ast.method.name.lower(),c[0],lambda x: x.name)
         if res is None or not type(res.mtype) is MType or not type(res.mtype.rettype) is VoidType:
             raise Undeclared(Procedure(),ast.method.name)
         elif len(res.mtype.partype) != len(at) or False in [type(a) == type(b) or (type(a) == IntType and type(b) == FloatType) for a,b in zip(at,res.mtype.partype)]:
@@ -89,7 +96,7 @@ class StaticChecker(BaseVisitor,Utils):
                     if not self.checkSameArray(a,b):
                         raise TypeMismatchInStatement(ast)        
         else:
-            return res.mtype.rettype
+            return False
    
     def visitBinaryOp(self, ast, c):
         left_type = type(self.visit(ast.left,c))
@@ -148,7 +155,7 @@ class StaticChecker(BaseVisitor,Utils):
     
     def visitCallExpr(self, ast, c):
         at = [self.visit(x,c) for x in ast.param]
-        res = self.lookup(ast.method.name,c,lambda x: x.name)
+        res = self.lookup(ast.method.name.lower(),c,lambda x: x.name)
         if res is None or not type(res.mtype) is MType or type(res.mtype.rettype) is VoidType:
             raise Undeclared(Function(),ast.method.name)
         elif len(res.mtype.partype) != len(at) or False in [type(a) == type(b) or (type(a) == IntType and type(b) == FloatType) for a,b in zip(at,res.mtype.partype)]:
@@ -161,7 +168,7 @@ class StaticChecker(BaseVisitor,Utils):
         return res.mtype.rettype
     
     def visitId(self,ast,c):
-        res = self.lookup(ast.name,c,lambda x: x.name)
+        res = self.lookup(ast.name.lower(),c,lambda x: x.name)
         if res: 
             return res.mtype
         else:
@@ -199,13 +206,11 @@ class StaticChecker(BaseVisitor,Utils):
             raise TypeMismatchInStatement(ast)
         thenStmt = [self.visit(x,c) for x in ast.thenStmt]
         elseStmt = [self.visit(x,c) for x in ast.elseStmt]
-        print(thenStmt)
-        print(elseStmt)
-        if (True in thenStmt) and (True in elseStmt):
+        if True in thenStmt and True in elseStmt:
             return True
         else:
-            return False
-        
+            return False 
+    
     def visitFor(self, ast, c):
         if True in [type(a) != IntType for a in [self.visit(ast.id,c[0]), self.visit(ast.expr1,c[0]), self.visit(ast.expr2,c[0])]]:
             raise TypeMismatchInStatement(ast)
@@ -213,11 +218,11 @@ class StaticChecker(BaseVisitor,Utils):
         return False
 
     def visitContinue(self, ast, c):
-        if c[2] != True:
+        if c[2] == False:
             raise ContinueNotInLoop()
         return False
     def visitBreak(self, ast, c):
-        if c[2] != True:
+        if c[2] == False:
             raise BreakNotInLoop()
         return False
 

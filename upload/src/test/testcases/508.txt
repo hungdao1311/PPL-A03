@@ -1,24 +1,27 @@
 
-                var a: real;
+                var a:integer;
+procedure funcA();
+var b:integer; 
+begin 
+	
+	a := 7;
+	b := a;
+end
+function sum(b:integer):integer; 
+var d:integer;
+begin 
+	
+	d := 7;
+	return a + b + d;
+end
+procedure main(); 
+var m:array[1 .. 10] of integer;
+begin 
 
-                procedure main();
-                var i,j:real;
-                k:boolean;
-                a:string;
-                b:array[1 .. 5] of integer;
-                d:string;
-                begin
-                foo(b[10]);
-                end
+	m[1] := sum(3);
+	funcA();
+	a := 1 + n[1];
+	return ;
+end
 
-                procedure foo(b:integer);
-                var a:array[1 .. 5] of integer;
-                begin
-                    
-                end
-                procedure foo(b:integer);
-                var a:array[1 .. 5] of integer;
-                begin
-                    
-                end
             
