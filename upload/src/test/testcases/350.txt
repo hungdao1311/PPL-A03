@@ -1,0 +1,14 @@
+
+                function fibo(x: integer): integer;
+                begin
+                    if x<=2 then return 1;
+                    else return fibo(x-2)+ fibo(x-1);
+                end
+                procedure main();
+                var b:real;
+                a:integer;
+                begin
+                   b:=fibo(a);
+                   return b; 
+                end
+                

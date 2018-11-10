@@ -1,1 +1,1 @@
-Program([VarDecl(Id(a),FloatType),FuncDecl(Id(main),[],VoidType(),[],[CallStmt(Id(putIntLn),[Id(b)]),CallStmt(Id(putIntLn),[Id(c)])]),VarDecl(Id(b),IntType)])
+Program([FuncDecl(Id(main),[],VoidType(),[],[CallStmt(Id(putboolLn),[UnaryOp(not,IntLiteral(2))])])])

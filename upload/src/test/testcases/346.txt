@@ -1,0 +1,16 @@
+
+Var
+    i : Integer;
+    myIntArray : Array[1 .. 20] of Integer;
+    myBoolArray : Array[1 .. 20] of Boolean;
+
+Procedure Main();
+Begin
+    For i := 1 to 5 do
+    Begin
+        myIntArray[i] := 1;
+        myBoolArray[i] := True;
+        myBoolArray[i+2] := 3;
+    End
+End
+        

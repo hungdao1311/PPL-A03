@@ -1,1 +1,1 @@
-Type Mismatch In Statement: CallStmt(Id(testPrintArr),[Id(a)])
+Undeclared Procedure: testPrintArr

@@ -1,0 +1,13 @@
+
+                var a: real;
+                procedure main();
+                var i,j:integer;
+                k:boolean;
+                begin
+                end
+                function foo():array [1 .. 5] of real;
+                var a:array[1 .. 5] of integer;
+                begin
+                return a ;
+                end
+            

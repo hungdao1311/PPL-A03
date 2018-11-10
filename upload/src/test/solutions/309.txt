@@ -1,1 +1,1 @@
-[<StaticCheck.Symbol object at 0x7fea0b4b5898>]
+Type Mismatch In Expression: BinaryOp(div,FloatLiteral(2),IntLiteral(2))

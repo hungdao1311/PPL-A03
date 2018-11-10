@@ -5,8 +5,194 @@ from AST import *
 class CheckerSuite(unittest.TestCase):
 
 # Redeclared Variable: 5
-    def test_redeclared_variable_1(self):
-        """Simple program: int main() {} """
+    def test_global_var(self):
+        input = Program(
+            [
+                VarDecl(Id("a"), FloatType()),
+                VarDecl(Id("b"), IntType()),
+                VarDecl(Id("z"), StringType()),
+                FuncDecl(Id("main"), [VarDecl(Id("m"), StringType()),VarDecl(Id("h"), IntType())], [], [])# procedure
+             ])
+        expect = 'No entry point'
+        self.assertTrue(TestChecker.test(input, expect, 300))
+    def test_redecl_vardecl1(self):
+        input = Program(
+            [
+                VarDecl(Id("a"), FloatType()),
+                FuncDecl(Id("main"), [], [], []),# procedure
+                VarDecl(Id("a"), IntType()),
+            ])
+        expect = 'Redeclared Variable: a'
+        self.assertTrue(TestChecker.test(input, expect, 301))
+    def test_redecl_func2(self):
+        input = Program(
+            [
+                VarDecl(Id("a"), FloatType()),
+                FuncDecl(Id("main"), [VarDecl(Id("m"), StringType()),VarDecl(Id("h"), IntType())], [], [],IntType()),
+                FuncDecl(Id("main"), [VarDecl(Id("m"), StringType()),VarDecl(Id("h"), IntType())], [], [],IntType()),
+                FuncDecl(Id("main"), [VarDecl(Id("m"), StringType()),VarDecl(Id("h"), IntType())], [], [])
+             ])
+        expect = 'Redeclared Function: main'
+        self.assertTrue(TestChecker.test(input, expect, 302))
+    def test_redecl_proce3(self):
+        input = Program(
+            [
+                VarDecl(Id("a"), FloatType()),
+                FuncDecl(Id("main"), [VarDecl(Id("m"), StringType()),VarDecl(Id("h"), IntType())], [], [],IntType()),
+                FuncDecl(Id("main"), [VarDecl(Id("m"), StringType()),VarDecl(Id("h"), IntType())], [], []),
+                FuncDecl(Id("main"), [VarDecl(Id("h"), IntType())], [], []),
+                FuncDecl(Id("main1s"), [VarDecl(Id("m"), StringType()),VarDecl(Id("h"), IntType())], [], [],IntType()),
+            ])
+        expect = 'Redeclared Procedure: main'
+        self.assertTrue(TestChecker.test(input, expect, 303))
+    def test_q3_float4(self):
+        input = Program([
+                FuncDecl(Id("main"),[],[],[
+                    CallStmt(Id("putIntLn"),[IntLiteral(1)]),
+                    CallStmt(Id("putIntLn"),[FloatLiteral(2.3)])
+                ])
+        ])
+        expect = 'Type Mismatch In Statement: CallStmt(Id(putIntLn),[FloatLiteral(2.3)])'
+        self.assertTrue(TestChecker.test(input,expect,304))
+    def test_BinOp5(self):
+        input = Program([
+                FuncDecl(Id("main"),[],[],[
+                    CallStmt(Id("putIntLn"),[BinaryOp("+",StringLiteral("2.3"),IntLiteral(2))])
+                ])
+        ])
+        expect = 'Type Mismatch In Expression: BinaryOp(+,StringLiteral(2.3),IntLiteral(2))'
+        self.assertTrue(TestChecker.test(input,expect,305))
+    
+    def test_BinOp6(self):
+        input = Program([
+                FuncDecl(Id("main"),[],[],[
+                    CallStmt(Id("putIntLn"),[BinaryOp("div",FloatLiteral(2.3),IntLiteral(2))])
+                ])
+        ])
+        expect = 'Type Mismatch In Expression: BinaryOp(div,FloatLiteral(2.3),IntLiteral(2))'
+        self.assertTrue(TestChecker.test(input,expect,306))
+    def test_BinOp7(self):
+        input = Program([
+                FuncDecl(Id("main"),[],[],[
+                    CallStmt(Id("putIntLn"),[BinaryOp("andthen",BooleanLiteral(True),IntLiteral(2))])
+                ])
+        ])
+        expect = 'Type Mismatch In Expression: BinaryOp(andthen,BooleanLiteral(True),IntLiteral(2))'
+        self.assertTrue(TestChecker.test(input,expect,307))
+    def test_BinOp8(self):
+        input = Program([
+                FuncDecl(Id("main"),[],[],[
+                    CallStmt(Id("putIntLn"),[BinaryOp("div",IntLiteral(2),FloatLiteral(2.3))])
+                ])
+        ])
+        expect = 'Type Mismatch In Expression: BinaryOp(div,IntLiteral(2),FloatLiteral(2.3))'
+        self.assertTrue(TestChecker.test(input,expect,308))
+    
+    def test_BinOp9(self):
+        input = Program([
+                FuncDecl(Id("main"),[],[],[
+                    CallStmt(Id("putFloatLn"),[BinaryOp("+",IntLiteral(2),IntLiteral(2))]),
+                    CallStmt(Id("putFloatLn"),[BinaryOp("div",FloatLiteral(2),IntLiteral(2))])
+                ])
+        ])
+        expect = 'Type Mismatch In Expression: BinaryOp(div,FloatLiteral(2),IntLiteral(2))'
+        self.assertTrue(TestChecker.test(input,expect,309))
+    def test_UnOp10(self):
+        input = Program([
+                FuncDecl(Id("main"),[],[],[
+                    CallStmt(Id("putIntLn"),[UnaryOp("not",FloatLiteral(2.3))])
+                ])
+        ])
+        expect = 'Type Mismatch In Expression: UnaryOp(not,FloatLiteral(2.3))'
+        self.assertTrue(TestChecker.test(input,expect,310))
+    def test_arrayCell11(self):
+        input = Program([
+                FuncDecl(Id("main"),[],[VarDecl(Id("a"),ArrayType(2,5,FloatType()))],[
+                    CallStmt(Id("putIntLn"),[ArrayCell(Id("a"),IntLiteral(4))])
+                ])
+        ])
+        expect = 'Type Mismatch In Statement: CallStmt(Id(putIntLn),[ArrayCell(Id(a),IntLiteral(4))])'
+        self.assertTrue(TestChecker.test(input,expect,311))
+    def test_FunCall12(self):
+        input = Program([
+                FuncDecl(Id("main"),[],[],[
+                    CallStmt(Id("putFloatLn"),[StringLiteral("4")])
+                ])
+        ])
+        expect = 'Type Mismatch In Statement: CallStmt(Id(putFloatLn),[StringLiteral(4)])'
+        self.assertTrue(TestChecker.test(input,expect,312))
+    
+    def test_FunCall13(self):
+        input = Program([
+                FuncDecl(Id("main"),[],[VarDecl(Id("a"),ArrayType(3,5,FloatType()))],[
+                    CallStmt(Id("testPrintArr"),[Id("a")])
+                ])
+        ])
+        expect = 'Undeclared Procedure: testPrintArr'
+        self.assertTrue(TestChecker.test(input,expect,313))
+
+    def test_UnOp14(self):
+        input = Program([
+                FuncDecl(Id("main"),[],[],[
+                    CallStmt(Id("putboolLn"),[UnaryOp("not",IntLiteral(2))])
+                ])
+        ])
+        expect = 'Type Mismatch In Expression: UnaryOp(not,IntLiteral(2))'
+        self.assertTrue(TestChecker.test(input,expect,314))
+
+    def test_UnOp15(self):
+        input = Program([
+                FuncDecl(Id("main"),[],[],[
+                    CallStmt(Id("putboolLn"),[UnaryOp("-",IntLiteral(2))])
+                ])
+        ])
+        expect = 'Type Mismatch In Statement: CallStmt(Id(putboolLn),[UnaryOp(-,IntLiteral(2))])'
+        self.assertTrue(TestChecker.test(input,expect,315))
+    
+    def test_BinOp16(self):
+        input = Program([
+                FuncDecl(Id("main"),[],[],[
+                    CallStmt(Id("putFloatLn"),[BinaryOp("+",IntLiteral(2),IntLiteral(2))]),
+                    CallStmt(Id("putFloatLn"),[BinaryOp("/",IntLiteral(2),IntLiteral(2))]),
+                    CallStmt(Id("putIntLn"),[BinaryOp("/",IntLiteral(2),IntLiteral(2))])
+                ])
+        ])
+        expect = 'Type Mismatch In Statement: CallStmt(Id(putIntLn),[BinaryOp(/,IntLiteral(2),IntLiteral(2))])'
+        self.assertTrue(TestChecker.test(input,expect,316))
+    
+    def test_BinOp17(self):
+        input = Program([
+                FuncDecl(Id("main"),[],[],[
+                    CallStmt(Id("putBoolLn"),[UnaryOp("not",BinaryOp(">",IntLiteral(2),IntLiteral(2)))]),
+                    CallStmt(Id("putIntLn"),[BinaryOp("-",StringLiteral("2"),IntLiteral(2))])
+                ])
+        ])
+        expect = 'Type Mismatch In Expression: BinaryOp(-,StringLiteral(2),IntLiteral(2))'
+        self.assertTrue(TestChecker.test(input,expect,317))
+    
+    def test_redeclared_par18(self):
+        input = """
+var c4:integer;
+
+function c3(c1:string; c1:integer):integer;
+begin
+    return c4;
+end
+
+
+
+procedure main(); 
+var c1:integer;
+    c2:real;
+    c3:string;
+begin
+ 
+end
+"""
+        expect = "Redeclared Parameter: c1"
+        self.assertTrue(TestChecker.test(input,expect,318))
+
+    def test_redecl_var19(self):
         input = """
         
 var conbocuoi1, conbocuoi2:integer;
@@ -20,70 +206,9 @@ begin
 end
 """
         expect = "Redeclared Variable: conbocuoi2"
-        self.assertTrue(TestChecker.test(input,expect,400))
-        
-    def test_redeclared_variable_2(self):
-        """Simple program: int main() {} """
-        input = """
-        
-var conbocuoi1, conbocuoi2:integer;
+        self.assertTrue(TestChecker.test(input,expect,319))
 
-function conbocuoi4(conbocuoi5:integer):integer;
-var conbocuoi1:integer;
-    conbocuoi1:real;
-begin
-    return 0;
-end
-
-procedure main(); 
-var conbocuoi1:integer;
-    conbocuoi2:real;
-    conbocuoi2:string;
-begin 
-    return;
-end
-"""
-        expect = "Redeclared Variable: conbocuoi1"
-        self.assertTrue(TestChecker.test(input,expect,401))
-
-    def test_redeclared_variable_3(self):
-        """Simple program: int main() {} """
-        input = """
-        
-var conbocuoi3, conbocuoi2:integer;
-    conbocuoi3:array [1 .. 10] of real;
-procedure main(); 
-var conbocuoi1:integer;
-    conbocuoi2:real;
-    conbocuoi2:string;
-begin 
-    return;
-end
-"""
-        expect = "Redeclared Variable: conbocuoi3"
-        self.assertTrue(TestChecker.test(input,expect,402))
-    
-    def test_redeclared_variable_4(self):
-        input = """
-var conbocuoi1, conbocuoi2:integer;
-
-procedure main(); 
-var conbocuoi1:integer;
-    conbocuoi2:real;
-    conbocuoi3:string;
-begin
-    with conbocuoi4:integer;
-         conbocuoi4:array [1 .. 2] of real;
-    do
-        conbocuoi4 := 10;
-
-    return;
-end
-"""
-        expect = "Redeclared Variable: conbocuoi4"
-        self.assertTrue(TestChecker.test(input,expect,403))
-    
-    def test_redeclared_variable_5(self):
+    def test_redecl_var20(self):
         input = """
         
 var conbocuoi5, conbocuoi2, conbocuoi3, conbocuoi5:integer;
@@ -97,709 +222,410 @@ begin
 end
 """
         expect = "Redeclared Variable: conbocuoi5"
-        self.assertTrue(TestChecker.test(input,expect,404))
-        
+        self.assertTrue(TestChecker.test(input,expect,320))
     
-# Redeclared Function: 5
-    def test_redeclared_function_1(self):
-        input = """
-        
-var conbocuoi1, conbocuoi2:integer;
-
-function conbocuoi1(hihi:integer):integer;
-begin
-    return 10;
-end
-
-procedure main(); 
-var conbocuoi1:integer;
-    conbocuoi2:real;
-begin 
-    conbocuoi1();
-end
-"""
-        expect = "Redeclared Function: conbocuoi1"
-        self.assertTrue(TestChecker.test(input,expect,405))
-        
-    def test_redeclared_function_2(self):
-        input = """
-        
-var conbocuoi1:integer;
-
-procedure conbocuoi2();
-begin
-    return;
-end
-
-function conbocuoi2():integer;
-begin
-    return 10;
-end
-
-procedure main(); 
-var conbocuoi1:integer;
-    conbocuoi2:real;
-    conbocuoi2:string;
-begin 
-    return;
-end
-"""
-        expect = "Redeclared Function: conbocuoi2"
-        self.assertTrue(TestChecker.test(input,expect,406))
-
-    def test_redeclared_function_3(self):
-        input = """
-        
-var conbocuoi1:integer;
-
-procedure conbocuoi2();
-begin
-    return;
-end
-
-function conbocuoi3():integer;
-begin
-    return 10;
-end
-
-function conbocuoi3():integer;
-begin
-    return 100;
-end
-
-procedure main(); 
-var conbocuoi1:integer;
-    conbocuoi2:real;
-    conbocuoi2:string;
-begin 
-    return;
-end
-"""
-        expect = "Redeclared Function: conbocuoi3"
-        self.assertTrue(TestChecker.test(input,expect,407))
-        
-    def test_redeclared_function_4(self):
-        input = """
-        
-var conbocuoi4:integer;
-
-procedure conbocuoi2();
-begin
-    return;
-end
-
-function conbocuoi3():integer;
-begin
-    return 10;
-end
-
-function conbocuoi4():integer;
-begin
-    return 100;
-end
-
-procedure main(); 
-var conbocuoi1:integer;
-    conbocuoi2:real;
-    conbocuoi2:string;
-begin
-    return;
-end
-
-procedure conbocuoi4();
-begin
-    return;
-end
-"""
-        expect = "Redeclared Function: conbocuoi4"
-        self.assertTrue(TestChecker.test(input,expect,408))
-        
-    def test_redeclared_function_5(self):
-        input = """
-        
-var conbocuoi4:integer;
-
-function conbocuoi3():integer;
-begin
-    return conbocuoi4();
-end
-
-function conbocuoi6():integer;
-begin
-    return 100;
-end
-
-procedure conbocuoi5();
-begin
-    return;
-end
-
-function conbocuoi5():integer;
-begin
-    return 100;
-end
-
-procedure main(); 
-var conbocuoi1:integer;
-    conbocuoi2:real;
-    conbocuoi2:string;
-begin
-    return;
-end
-"""
-        expect = "Redeclared Function: conbocuoi5"
-        self.assertTrue(TestChecker.test(input,expect,409))
-        
-# Redeclared Procedure: 5
-    def test_redeclared_procedure_1(self):
-        input = """
-        
-var conbocuoi1, conbocuoi2:integer;
-
-procedure conbocuoi1(hihi:integer);
-begin
-    return;
-end
-
-procedure main(); 
-var conbocuoi1:integer;
-    conbocuoi2:real;
-begin 
-    conbocuoi1();
-end
-"""
-        expect = "Redeclared Procedure: conbocuoi1"
-        self.assertTrue(TestChecker.test(input,expect,410))
-        
-    def test_redeclared_procedure_2(self):
-        input = """
-        
-var conbocuoi1:integer;
-
-procedure conbocuoi2();
-begin
-    return;
-end
-
-procedure conbocuoi2();
-begin
-    return;
-end
-
-procedure main(); 
-var conbocuoi1:integer;
-    conbocuoi2:real;
-    conbocuoi3:string;
-begin 
-    return;
-end
-"""
-        expect = "Redeclared Procedure: conbocuoi2"
-        self.assertTrue(TestChecker.test(input,expect,411))
-
-    def test_redeclared_procedure_3(self):
-        input = """
-        
-var conbocuoi1:integer;
-
-procedure conbocuoi2();
-begin
-    return;
-end
-
-function conbocuoi3():integer;
-begin
-    return 10;
-end
-
-procedure conbocuoi3();
-begin
-    return;
-end
-
-procedure main(); 
-var conbocuoi1:integer;
-    conbocuoi2:real;
-    conbocuoi3:string;
-begin 
-    return;
-end
-"""
-        expect = "Redeclared Procedure: conbocuoi3"
-        self.assertTrue(TestChecker.test(input,expect,412))
-        
-    def test_redeclared_procedure_4(self):
-        input = """
-        
-var conbocuoi4:integer;
-
-procedure conbocuoi2();
-begin
-    return;
-end
-
-function conbocuoi3():integer;
-begin
-    return 10;
-end
-
-procedure conbocuoi4();
-begin
-    return;
-end
-
-procedure main(); 
-var conbocuoi1:integer;
-    conbocuoi2:real;
-    conbocuoi3:string;
-begin
-    return;
-end
-
-function conbocuoi4():integer;
-begin
-    return 100;
-end
-"""
-        expect = "Redeclared Procedure: conbocuoi4"
-        self.assertTrue(TestChecker.test(input,expect,413))
-        
-    def test_redeclared_procedure_5(self):
-        input = """
-        
-var conbocuoi4:integer;
-
-function conbocuoi3():integer;
-begin
-    return conbocuoi4();
-end
-
-function conbocuoi6():integer;
-begin
-    return 100;
-end
-
-procedure conbocuoi5();
-begin
-    return;
-end
-
-procedure conbocuoi5();
-begin
-    return;
-end
-
-procedure main(); 
-var conbocuoi1:integer;
-    conbocuoi2:real;
-    conbocuoi3:string;
-begin
-    return;
-end
-"""
-        expect = "Redeclared Procedure: conbocuoi5"
-        self.assertTrue(TestChecker.test(input,expect,414))
-        
-
-# Redeclared Parameter: 5
-    def test_redeclared_parameter_1(self):
-        input = """
-var conbocuoi4:integer;
-
-function conbocuoi3(conbocuoi1:string; conbocuoi1:integer):integer;
-begin
-    return conbocuoi4;
-end
-
-function conbocuoi6():integer;
-begin
-    return 100;
-end
-
-procedure main(); 
-var conbocuoi1:integer;
-    conbocuoi2:real;
-    conbocuoi3:string;
-begin
-    return;
-end
-"""
-        expect = "Redeclared Parameter: conbocuoi1"
-        self.assertTrue(TestChecker.test(input,expect,415))
-        
-    def test_redeclared_parameter_2(self):
-        input = """
-var conbocuoi4:integer;
-
-function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
-begin
-    return conbocuoi6(1, "conbocuoi");
-end
-
-function conbocuoi6(conbocuoi2:integer; conbocuoi2:string):integer;
-begin
-    return 100;
-end
-
-procedure main(); 
-var conbocuoi1:integer;
-    conbocuoi2:real;
-    conbocuoi3:string;
-begin
-    return;
-end
-"""
-        expect = "Redeclared Parameter: conbocuoi2"
-        self.assertTrue(TestChecker.test(input,expect,416))
-        
-    def test_redeclared_parameter_3(self):
-        input = """
-var conbocuoi4:integer;
-
-function conbocuoi3(conbocuoi1:string; conbocuoi3:integer; conbocuoi3:real):integer;
-begin
-    return conbocuoi4;
-end
-
-function conbocuoi6():integer;
-begin
-    return 100;
-end
-
-procedure main(); 
-var conbocuoi1:integer;
-    conbocuoi2:real;
-    conbocuoi3:string;
-begin
-    return;
-end
-"""
-        expect = "Redeclared Parameter: conbocuoi3"
-        self.assertTrue(TestChecker.test(input,expect,417))
-        
-    def test_redeclared_parameter_4(self):
-        input = """
-var conbocuoi4:integer;
-
-function conbocuoi3(conbocuoi1:string; conbocuoi4:integer):integer;
-begin
-    return conbocuoi4;
-end
-
-procedure conbocuoi6(conbocuoi4:array [1 .. 100] of real; conbocuoi4:string);
-begin
-    return;
-end
-
-procedure main(); 
-var conbocuoi1:integer;
-    conbocuoi2:real;
-    conbocuoi3:string;
-begin
-    return;
-end
-"""
-        expect = "Redeclared Parameter: conbocuoi4"
-        self.assertTrue(TestChecker.test(input,expect,418))
-        
-    def test_redeclared_parameter_5(self):
-        input = """
-var conbocuoi4:integer;
-
-function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
-begin
-    return conbocuoi4;
-end
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi5:boolean);
-begin
-    return;
-end
-
-procedure main(); 
-var conbocuoi1:integer;
-    conbocuoi2:real;
-    conbocuoi3:string;
-begin
-    return;
-end
-"""
-        expect = "Redeclared Parameter: conbocuoi5"
-        self.assertTrue(TestChecker.test(input,expect,419))
-        
-
-# Undeclared Identifier: 5
-    def test_undeclared_identifier_1(self):
-        input = """
-var conbocuoi4:integer;
-
-function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
-begin
-    return conbocuoi4;
-end
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
-begin
-    return;
-end
-
-procedure main(); 
-var
-    conbocuoi2:real;
-begin
-    conbocuoi1 := 1;
-    return;
-end
-"""
-        expect = "Undeclared Identifier: conbocuoi1"
-        self.assertTrue(TestChecker.test(input,expect,420))
-        
-    def test_undeclared_identifier_2(self):
-        input = """
-var conbocuoi4:integer;
-
-function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
-begin
-    return conbocuoi4;
-end
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
-begin
-    return;
-end
-
-procedure main(); 
-var conbocuoi1:real;
-begin
-    conbocuoi2 := 1;
-    return;
-end
-"""
-        expect = "Undeclared Identifier: conbocuoi2"
-        self.assertTrue(TestChecker.test(input,expect,421))
-        
-    def test_undeclared_identifier_3(self):
-        input = """
-var conbocuoi4:integer;
-
-function conbocuoi7(conbocuoi1:string; conbocuoi2:integer):integer;
-begin
-    if (conbocuoi3) then conbocuoi3 := True;
-    return conbocuoi4;
-end
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
-begin
-    return;
-end
-
-procedure main(); 
-var conbocuoi1:integer;
-    conbocuoi2:real;
-begin
-    conbocuoi1 := 1;
-    return;
-end
-"""
-        expect = "Undeclared Identifier: conbocuoi3"
-        self.assertTrue(TestChecker.test(input,expect,422))
-        
-    def test_undeclared_identifier_4(self):
-        input = """
-var conbocuoi5:integer;
-
-function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
-begin
-    return conbocuoi4;
-end
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
-begin
-    return;
-end
-
-procedure main(); 
-var
-    conbocuoi2:real;
-begin
-    for conbocuoi4 := 1 to conbocuoi5 do
-    begin
-        conbocuoi5 := conbocuoi5 + 10;
-    end
-    return;
-end
-"""
-        expect = "Undeclared Identifier: conbocuoi4"
-        self.assertTrue(TestChecker.test(input,expect,423))
-        
+    def test_built_in21(self):
+        input = Program([
+                FuncDecl(Id("main"),[],[VarDecl(Id("a"),IntType())],[
+                    Assign(Id("a"),CallExpr(Id("getint"),[])),
+                    CallStmt(Id("putFloatLna"),[BinaryOp("/",IntLiteral(2),IntLiteral(2))]),
+                ])
+        ])
+        expect = 'Undeclared Procedure: putFloatLna'
+        self.assertTrue(TestChecker.test(input,expect,321))
     
+    def test_built_in22(self):
+        input = Program([
+                FuncDecl(Id("main"),[],[VarDecl(Id("a"),FloatType())],[
+                    Assign(Id("a"),CallExpr(Id("getint"),[])),
+                    CallStmt(Id("putLna"),[]),
+                ])
+        ])
+        expect = 'Undeclared Procedure: putLna'
+        self.assertTrue(TestChecker.test(input,expect,322))
 
+    def test_built_in23(self):
+        input = Program([
+                FuncDecl(Id("main"),[],[VarDecl(Id("a"),FloatType()),VarDecl(Id("b"),StringType())],[
+                    Assign(Id("a"),CallExpr(Id("getint"),[])),
+                    CallStmt(Id("putstring"),[Id("b")]),
+                    CallStmt(Id("putstr"),[])
+                ])
+        ])
+        expect = 'Undeclared Procedure: putstr'
+        self.assertTrue(TestChecker.test(input,expect,323))
 
-# Undeclared Function: 5
-    def test_undeclared_function_1(self):
+    def test_built_in24(self):
+        input = Program([
+                FuncDecl(Id("main"),[],[VarDecl(Id("a"),FloatType()),VarDecl(Id("b"),StringType())],[
+                    Assign(Id("a"),CallExpr(Id("getint"),[])),
+                    CallStmt(Id("putstring"),[Id("b")]),
+                    CallStmt(Id("putln"),[]),
+                    CallStmt(Id("d"),[])
+                ])
+        ])
+        expect = 'Undeclared Procedure: d'
+        self.assertTrue(TestChecker.test(input,expect,324))
+    
+    def test_global25(self):
+        input = Program([VarDecl(Id("a"),FloatType()),
+                FuncDecl(Id("main"),[],[],[
+                    Assign(Id("a"),CallExpr(Id("getint"),[])),
+                    CallStmt(Id("putstring"),[Id("b")]),
+                    CallStmt(Id("putln"),[]),
+                    CallStmt(Id("d"),[])
+                ]),
+                VarDecl(Id("b"),StringType())
+        ])
+        expect = 'Undeclared Procedure: d'
+        self.assertTrue(TestChecker.test(input,expect,325))
+    
+    def test_noentry26(self):
+        input = Program([VarDecl(Id("a"),FloatType()),
+                FuncDecl(Id("maine"),[],[],[
+                    Assign(Id("a"),CallExpr(Id("getint"),[])),
+                    CallStmt(Id("putstring"),[Id("b")]),
+                    CallStmt(Id("putln"),[]),
+                    CallStmt(Id("d"),[])
+                ]),
+                VarDecl(Id("b"),StringType())
+        ])
+        expect = 'No entry point'
+        self.assertTrue(TestChecker.test(input,expect,326))
+    
+    def test_noentry27(self):
+        input = Program([VarDecl(Id("a"),FloatType()),
+                FuncDecl(Id("main"),[VarDecl(Id("d"),FloatType())],[],[
+                    Assign(Id("a"),CallExpr(Id("getint"),[])),
+                    CallStmt(Id("putstring"),[Id("b")]),
+                    CallStmt(Id("putln"),[]),
+                    CallStmt(Id("d"),[])
+                ]),
+                VarDecl(Id("b"),StringType())
+        ])
+        expect = 'No entry point'
+        self.assertTrue(TestChecker.test(input,expect,327))
+    
+    def test_undecl28(self):
+        input = Program([
+                FuncDecl(Id("main"),[],[VarDecl(Id("a"),FloatType()),VarDecl(Id("b"),StringType())],[
+                    Assign(Id("a"),CallExpr(Id("getintel"),[])),
+                    CallStmt(Id("putstring"),[Id("b")]),
+                ])
+        ])
+        expect = 'Undeclared Function: getintel'
+        self.assertTrue(TestChecker.test(input,expect,328))
+    
+    def test_undecl29(self):
+        input = Program([
+                FuncDecl(Id("main"),[],[VarDecl(Id("a"),FloatType()),VarDecl(Id("b"),StringType())],[
+                    Assign(Id("a"),CallExpr(Id("getnt"),[])),
+                    CallStmt(Id("putstring"),[Id("b")]),
+                ])
+        ])
+        expect = 'Undeclared Function: getnt'
+        self.assertTrue(TestChecker.test(input,expect,329))
+    
+    def test_BinOp30(self):
+        input = Program([
+                FuncDecl(Id("main"),[],[],[
+                    CallStmt(Id("putBoolLn"),[UnaryOp("not",BinaryOp("andthen",IntLiteral(2),IntLiteral(2)))]),
+                    CallStmt(Id("putIntLn"),[])
+                ])
+        ])
+        expect = 'Type Mismatch In Expression: BinaryOp(andthen,IntLiteral(2),IntLiteral(2))'
+        self.assertTrue(TestChecker.test(input,expect,330))
+    
+    def test_BinOp31(self):
+        input = Program([
+                FuncDecl(Id("main"),[],[],[
+                    CallStmt(Id("putBoolLn"),[UnaryOp("not",BinaryOp("orelse",IntLiteral(2),IntLiteral(2)))]),
+                    CallStmt(Id("putIntLn"),[])
+                ])
+        ])
+        expect = 'Type Mismatch In Expression: BinaryOp(orelse,IntLiteral(2),IntLiteral(2))'
+        self.assertTrue(TestChecker.test(input,expect,331))
+    
+    def test_BinOp32(self):
+        input = Program([
+                FuncDecl(Id("main"),[],[],[
+                    CallStmt(Id("putBoolLn"),[UnaryOp("not",BinaryOp("orelse",IntLiteral(2),IntLiteral(2)))]),
+                    CallStmt(Id("putIntLn"),[])
+                ])
+        ])
+        expect = 'Type Mismatch In Expression: BinaryOp(orelse,IntLiteral(2),IntLiteral(2))'
+        self.assertTrue(TestChecker.test(input,expect,332))
+    
+    def test_BinOp33(self):
+        input = Program([
+                FuncDecl(Id("main"),[],[],[
+                    CallStmt(Id("putBoolLn"),[UnaryOp("not",BinaryOp("and",IntLiteral(2),IntLiteral(2)))]),
+                    CallStmt(Id("putIntLn"),[])
+                ])
+        ])
+        expect = 'Type Mismatch In Expression: BinaryOp(and,IntLiteral(2),IntLiteral(2))'
+        self.assertTrue(TestChecker.test(input,expect,333))
+    
+    def test_BinOp34(self):
+        input = Program([
+                FuncDecl(Id("main"),[],[],[
+                    CallStmt(Id("putBoolLn"),[UnaryOp("not",BinaryOp("or",IntLiteral(2),IntLiteral(2)))]),
+                    CallStmt(Id("putIntLn"),[])
+                ])
+        ])
+        expect = 'Type Mismatch In Expression: BinaryOp(or,IntLiteral(2),IntLiteral(2))'
+        self.assertTrue(TestChecker.test(input,expect,334))
+    
+    def test_BinOp35(self):
+        input = Program([
+                FuncDecl(Id("main"),[],[],[
+                    CallStmt(Id("putBoolLn"),[UnaryOp("not",BinaryOp("or",BooleanLiteral(True),BooleanLiteral(False)))]),
+                    CallStmt(Id("putInLn"),[])
+                ])
+        ])
+        expect = 'Undeclared Procedure: putInLn'
+        self.assertTrue(TestChecker.test(input,expect,335))
+    def test_for36(self):
         input = """
-var conbocuoi4:integer;
-
-function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
-begin
-    return conbocuoi4;
-end
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
-begin
-    return;
-end
-
-procedure main(); 
-var conbocuoi3:integer;
-    conbocuoi2:real;
-begin
-    conbocuoi2 := conbocuoi1(10);
-    return;
-end
-"""
-        expect = "Undeclared Function: conbocuoi1"
-        self.assertTrue(TestChecker.test(input,expect,425))
-
-    def test_undeclared_function_2(self):
+                var a: real;
+                procedure main();
+                var i,j:integer;
+                begin
+                    for a := 1 to 10 do begin
+                        for j := i downto 1 do
+                            if (i + j) mod 1 = 1 then break;
+                    end
+                end
+            """
+        expect = "Type Mismatch In Statement: For(Id(a)IntLiteral(1),IntLiteral(10),True,[For(Id(j)Id(i),IntLiteral(1),False,[If(BinaryOp(=,BinaryOp(mod,BinaryOp(+,Id(i),Id(j)),IntLiteral(1)),IntLiteral(1)),[Break],[])])])"
+        self.assertTrue(TestChecker.test(input, expect, 336))
+    
+    def test_while37(self):
         input = """
-var conbocuoi4:integer;
-
-function conbocuoi3(conbocuoi1:string; conbocuoi5:integer):integer;
-begin
-    for conbocuoi4 := 1 to 10 do
-    begin
-        conbocuoi5 := conbocuoi5 + 100;
-        conbocuoi5 := conbocuoi5 - conbocuoi2(conbocuoi1);
-    end
-    return conbocuoi4;
-end
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
-begin
-    return;
-end
-
-procedure main(); 
-var conbocuoi3:integer;
-    conbocuoi2:real;
-begin
-    conbocuoi2 := 10;
-    return;
-end
-"""
-        expect = "Undeclared Function: conbocuoi2"
-        self.assertTrue(TestChecker.test(input,expect,426))
-        
-    def test_undeclared_function_3(self):
+                var a: real;
+                procedure main();
+                var i,j:integer;
+                begin
+                    while i do j := i;
+                end
+            """
+        expect = "Type Mismatch In Statement: While(Id(i),[AssignStmt(Id(j),Id(i))])"
+        self.assertTrue(TestChecker.test(input, expect, 337))
+    
+    def test_return38(self):
         input = """
-var conbocuoi4:integer;
-
-function conbocuoi5(conbocuoi1:string; conbocuoi2:integer):integer;
-begin
-    return conbocuoi4;
-end
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
-begin
-    while conbocuoi6 do
-    begin
-        conbocuoi5 := conbocuoi5 - conbocuoi3("hihi");
-    end
-    return;
-end
-
-procedure main(); 
-var conbocuoi3:integer;
-    conbocuoi2:real;
-begin
-    conbocuoi2 := 10;
-    return;
-end
-"""
-        expect = "Undeclared Function: conbocuoi3"
-        self.assertTrue(TestChecker.test(input,expect,427))
-        
-    def test_undeclared_function_4(self):
+                var a: real;
+                procedure main();
+                var i,j:integer;
+                k:boolean;
+                begin
+                    return 3;
+                end
+            """
+        expect = "Type Mismatch In Statement: Return(Some(IntLiteral(3)))"
+        self.assertTrue(TestChecker.test(input, expect, 338))
+    
+    def test_return39(self):
         input = """
-var conbocuoi5:integer;
-
-function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
-begin
-    return conbocuoi4(100);
-end
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
-begin
-    return;
-end
-
-procedure main(); 
-var conbocuoi3:integer;
-    conbocuoi2:real;
-begin
-    conbocuoi2 := 10;
-    return;
-end
-"""
-        expect = "Undeclared Function: conbocuoi4"
-        self.assertTrue(TestChecker.test(input,expect,428))
-        
-    def test_undeclared_function_5(self):
+                var a: real;
+                procedure main();
+                var i,j:integer;
+                k:boolean;
+                begin
+                end
+                function foo():array [1 .. 5] of real;
+                var a:array[1 .. 5] of integer;
+                begin
+                return a ;
+                end
+            """
+        expect = "Type Mismatch In Statement: Return(Some(Id(a)))"
+        self.assertTrue(TestChecker.test(input, expect, 339))
+    
+    def test_funcall40(self):
         input = """
-var conbocuoi4:integer;
-
-function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
-begin
-    conbocuoi1 := conbocuoi5();
-    return conbocuoi4;
-end
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
-begin
-    return;
-end
-
-procedure main(); 
-var conbocuoi3:integer;
-    conbocuoi2:real;
-begin
-    conbocuoi2 := 10;
-    return;
-end
-"""
-        expect = "Undeclared Function: conbocuoi5"
-        self.assertTrue(TestChecker.test(input,expect,429))
-        
-# Undeclared Procedure: 5
-    def test_undeclared_procedure_1(self):
+Var name, surname: String;
+Procedure main();
+Begin
+	write("Enter your name:");
+	readln(name);
+	writeln("Your name is: ",name);
+	readln();
+End
+        """
+        expect ="Undeclared Procedure: write"
+        self.assertTrue(TestChecker.test(input, expect, 340))
+    
+    def test_global41(self):
         input = """
-var conbocuoi4:integer;
+procedure main();
+                
+                begin
+                    while true do putstring(a);
+                    b:=2;
+    
+                end
+                var a:String;
+        """
+        expect ="Undeclared Identifier: b"
+        self.assertTrue(TestChecker.test(input, expect, 341))
 
-function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
-begin
-    conbocuoi2 := 123;
-    return conbocuoi4;
-end
+    def test_with42(self):
+        input ="""var i : integer;
+        function f(): integer;
+        begin
+        return 200;
+        end
+        procedure main();
+        var
+            main: integer;
+        begin
+            main := f();
+            putintln(main);
+            with 
+                i: integer;
+                main: integer;
+                f: integer;
+            do  begin 
+                main := f := i := 100;
+                putIntLn();
+                putIntLn(f);
+                putIntLn(i);
+                end
+                putintlN(main);
+        end
+            var g: real;
 
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
-begin
-    return;
-end
+        """
+        expect ="Type Mismatch In Statement: CallStmt(Id(putIntLn),[])"
+        self.assertTrue(TestChecker.test(input, expect, 342))
 
-procedure main(); 
-var conbocuoi3:integer;
-    conbocuoi2:real;
-begin
-    conbocuoi2 := 10;
-    conbocuoi1();
-    return;
-end
-"""
-        expect = "Undeclared Procedure: conbocuoi1"
-        self.assertTrue(TestChecker.test(input,expect,430))
-        
-    def test_undeclared_procedure_2(self):
+    def test_func43(self):
+        input = """
+        fUnCTiOn foo(): integer;
+        var a,b: integer;
+        begin
+            a := a+b;
+            bar(a);
+        end"""
+        expect = 'No entry point'
+        self.assertTrue(TestChecker.test(input, expect, 343))
+
+    def test_func44(self):
+        input = """
+var check : Boolean;
+    abc   : String;
+Procedure main();
+Begin
+    While (True) Do
+    Begin
+        reAdLn(abc);
+    End
+End
+        """
+        expect = 'Undeclared Procedure: reAdLn'
+        self.assertTrue(TestChecker.test(input, expect, 344))
+    def test_func45(self):
+        input = """
+Var 
+	bool : Boolean;
+	A, B : Integer;
+Procedure main();
+Begin
+	A := 10;
+	B := 30;
+	bool := False;
+	bool := (A = 10) OR (B = 10);
+	bool := (A = 10) AND (B = 10);
+    return true;
+End
+        """
+        expect = 'Type Mismatch In Statement: Return(Some(BooleanLiteral(True)))'
+        self.assertTrue(TestChecker.test(input, expect, 345))
+
+    def test_array46(self):
+        input = """
+Var
+    i : Integer;
+    myIntArray : Array[1 .. 20] of Integer;
+    myBoolArray : Array[1 .. 20] of Boolean;
+
+Procedure Main();
+Begin
+    For i := 1 to 5 do
+    Begin
+        myIntArray[i] := 1;
+        myBoolArray[i] := True;
+        myBoolArray[i+2] := 3;
+    End
+End
+        """
+        expect = 'Type Mismatch In Statement: AssignStmt(ArrayCell(Id(myBoolArray),BinaryOp(+,Id(i),IntLiteral(2))),IntLiteral(3))'
+        self.assertTrue(TestChecker.test(input, expect, 346))
+
+    def test_assign_string47(self):
+        input = """
+Var 
+    S : String;
+
+Procedure main();
+Begin
+    S := "Hey there! How are you?";
+    putstring(S);
+    return s;
+End
+        """
+        expect = 'Type Mismatch In Statement: AssignStmt(Id(S),StringLiteral(Hey there! How are you?))'
+        self.assertTrue(TestChecker.test(input, expect, 347))
+    
+    def test_array48(self):
+        input = """
+Var
+	myVar : Integer;
+	myArray : Array[1 .. 5] of Integer;
+
+Procedure Main();
+Begin
+	myArray[2] := 25;
+	myVar := myArray[2];
+    myVar := myArray;
+End"""
+        expect = 'Type Mismatch In Statement: AssignStmt(Id(myVar),Id(myArray))'
+        self.assertTrue(TestChecker.test(input, expect, 348))
+    
+    def test_funcall49(self):
+        input = """procedure main();
+                    var
+                    radius, area : real;
+                    begin
+                    radius := 3333;
+                    putstring("The area is ");
+                    area := PI * radius * radius;
+                    
+                    end
+                """
+        expect = 'Undeclared Identifier: PI'
+        self.assertTrue(TestChecker.test(input, expect, 349))
+
+    def test_return50(self):
+        input = """
+                function fibo(x: integer): integer;
+                begin
+                    if x<=2 then return 1;
+                    else return fibo(x-2)+ fibo(x-1);
+                end
+                procedure main();
+                var b:real;
+                a:integer;
+                begin
+                   b:=fibo(a);
+                   return b; 
+                end
+                """
+        expect = 'Type Mismatch In Statement: Return(Some(Id(b)))'
+        self.assertTrue(TestChecker.test(input, expect, 350))
+    
+    def test_undeclared_procedure51(self):
         input = """
 var conbocuoi4:integer;
 
@@ -824,40 +650,9 @@ begin
 end
 """
         expect = "Undeclared Procedure: conbocuoi2"
-        self.assertTrue(TestChecker.test(input,expect,431))
-        
-    def test_undeclared_procedure_3(self):
-        input = """
-var conbocuoi4:integer;
+        self.assertTrue(TestChecker.test(input,expect,351))
 
-function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
-begin
-    conbocuoi2 := 123;
-    return conbocuoi4;
-end
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
-begin
-    while conbocuoi6 do
-    begin
-        conbocuoi5 := conbocuoi5 + 10;
-        conbocuoi3();
-    end
-    return;
-end
-
-procedure main(); 
-var conbocuoi3:integer;
-    conbocuoi2:real;
-begin
-    conbocuoi2 := 10;
-    return;
-end
-"""
-        expect = "Undeclared Procedure: conbocuoi3"
-        self.assertTrue(TestChecker.test(input,expect,432))
-        
-    def test_undeclared_procedure_4(self):
+    def test_undeclared_procedure52(self):
         input = """
 var conbocuoi4:integer;
 
@@ -891,42 +686,9 @@ begin
 end
 """
         expect = "Undeclared Procedure: conbocuoi4"
-        self.assertTrue(TestChecker.test(input,expect,433))
-        
-    def test_undeclared_procedure_5(self):
-        input = """
-var conbocuoi4:integer;
-
-function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
-begin
-    conbocuoi2 := 123;
-    conbocuoi5();
-    return conbocuoi4;
-end
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
-begin
-    while conbocuoi6 do
-    begin
-        conbocuoi5 := conbocuoi5 + 10;
-        continue;
-    end
-    return;
-end
-
-procedure main(); 
-var conbocuoi3:integer;
-    conbocuoi2:real;
-begin
-    conbocuoi2 := 10;
-    return;
-end
-"""
-        expect = "Undeclared Procedure: conbocuoi5"
-        self.assertTrue(TestChecker.test(input,expect,434))
-
-# TMIS If: 5
-    def test_TMIS_IF_1(self):
+        self.assertTrue(TestChecker.test(input,expect,352))
+    
+    def test_if53(self):
         input = """
 var conbocuoi4:integer;
 
@@ -959,9 +721,9 @@ begin
 end
 """
         expect = "Type Mismatch In Statement: If(IntLiteral(1),[AssignStmt(Id(conbocuoi2),IntLiteral(1)),AssignStmt(Id(conbocuoi3),IntLiteral(2))],[])"
-        self.assertTrue(TestChecker.test(input,expect,435))
-
-    def test_TMIS_IF_2(self):
+        self.assertTrue(TestChecker.test(input,expect,353))
+    
+    def test_if54(self):
         input = """
 var conbocuoi4:integer;
 
@@ -994,44 +756,181 @@ begin
 end
 """
         expect = "Type Mismatch In Statement: If(FloatLiteral(1.5),[AssignStmt(Id(conbocuoi2),IntLiteral(1)),AssignStmt(Id(conbocuoi3),IntLiteral(2))],[])"
-        self.assertTrue(TestChecker.test(input,expect,436))
-
-    def test_TMIS_IF_3(self):
+        self.assertTrue(TestChecker.test(input,expect,354))
+    
+    def test_var55(self):
+        """ Test Precedence """
         input = """
-var conbocuoi4:integer;
+                var a,b: integer;
+                procedure main();
+                var
+                    a: integer;
+                begin
+                    a := abc();
+                end
+                
+                procedure abc();
+                var
+                    a: integer;
+                begin
+                    a := a+c;
+                end
+                var c : integer;
+                """
+        expect = "Undeclared Function: abc"
+        self.assertTrue(TestChecker.test(input, expect, 355))
+    
+    def test_if56(self):
+        """ Test If Statement """
+        input = """
+                procedure main();
+                var a: real;
+                b:real;
+                c: integer;
+                e,g,h: real;
+                begin
+                    if a = 1 then begin
+                        if b > 3 then c := 5;
+                        else d := 1;
 
-function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
-begin
-    conbocuoi2 := 123;
-    return conbocuoi4;
-end
+                        if e < 4 then ok();
+                    end else begin
+                        if h > 5 then ok(); else lyo();
+                        g := 5;
+                    end 
+                    return ;
+                end
+                
+                procedure ok();
+                begin 
+                end 
+                
+                procedure lyo();
+                begin
+                end
+                """
+        expect = "Undeclared Identifier: d"
+        self.assertTrue(TestChecker.test(input, expect, 356))
+    
+    def test_continue57(self):
+        """ Test For Statment """
+        input = """
+                procedure main();
+                var a: real;
+                i,j:integer;
+                begin
+                    for i := 1 to 10 do begin
+                        for j := i downto 1 do
+                            if (i + j) mod 2 = 1 then break;
+                    continue;
+                    end
+                    continue;
+                end
+                """
+        expect = "Continue Not In Loop"
+        self.assertTrue(TestChecker.test(input, expect, 357))
+    
+    def test_multi58(self):
+        input = """
+                var a: real;
 
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
-begin
-    while conbocuoi6 do
-    begin
-        conbocuoi5 := conbocuoi5 + 10;
-        continue;
-    end
-    return;
-end
+                procedure main();
+                var a: real;
+                b:real;
+                i,j:integer;
+                begin
+                    for i := 1 to 10 do begin
+                        for j := i downto 1 do
+                            if (i + j) mod 2 = 1 then break;
+                    continue;
+                    end
+                end
 
-procedure main(); 
-var conbocuoi3:integer;
-    conbocuoi2:real;
-begin
-    if ("conbocuoi") then
-    begin
-        conbocuoi2 := 1;
-        conbocuoi3 := 2;
-    end
-    return;
-end
-"""
-        expect = "Type Mismatch In Statement: If(StringLiteral(conbocuoi),[AssignStmt(Id(conbocuoi2),IntLiteral(1)),AssignStmt(Id(conbocuoi3),IntLiteral(2))],[])"
-        self.assertTrue(TestChecker.test(input,expect,437))
-        
-    def test_TMIS_IF_4(self):
+                procedure b();
+                var a: real;
+                begin 
+                    with wi,wi:integer; do 
+                    begin
+                    end
+                end
+                """
+        expect = "Redeclared Variable: wi"
+        self.assertTrue(TestChecker.test(input, expect, 358))
+    
+    def test_for59(self):
+        input = """
+                var a: real;
+                procedure main();
+                var i,j:integer;
+                begin
+                    for a := 1 to 10 do begin
+                        for j := i downto 1 do
+                            if (i + j) mod 1 = 1 then break;
+                    end
+                end
+            """
+        expect = "Type Mismatch In Statement: For(Id(a)IntLiteral(1),IntLiteral(10),True,[For(Id(j)Id(i),IntLiteral(1),False,[If(BinaryOp(=,BinaryOp(mod,BinaryOp(+,Id(i),Id(j)),IntLiteral(1)),IntLiteral(1)),[Break],[])])])"
+        self.assertTrue(TestChecker.test(input, expect, 359))
+    
+    def test_if60(self):
+        input = """
+                var a: real;
+                procedure main();
+                var i,j:integer;
+                begin
+                    if i then j := i;
+                end
+            """
+        expect = "Type Mismatch In Statement: If(Id(i),[AssignStmt(Id(j),Id(i))],[])"
+        self.assertTrue(TestChecker.test(input, expect, 360))
+    
+    def test_for61(self):
+        input = """
+                var a: real;
+                procedure main();
+                var i,j:integer;
+                begin
+                    for i := 1 to a do begin
+                        for j := i downto 1 do
+                            if (i + j) mod 1 = 1 then break;
+                    end
+                end
+            """
+        expect = "Type Mismatch In Statement: For(Id(i)IntLiteral(1),Id(a),True,[For(Id(j)Id(i),IntLiteral(1),False,[If(BinaryOp(=,BinaryOp(mod,BinaryOp(+,Id(i),Id(j)),IntLiteral(1)),IntLiteral(1)),[Break],[])])])"
+        self.assertTrue(TestChecker.test(input, expect, 361))
+    
+    def test_proc62(self):
+        input = """
+        var d: integer;
+        f: string;
+        procedure Hn(n,a,b: integer);
+            begin
+            if n = 0 then exit();
+            Hn(n-1,a,6-a-b);
+            inc(d);
+            writeln(f,d,". ",a," -> ",b);
+            Hn(n-1,6-a-b,b);
+            end
+        procedure runHn(n: integer);
+            begin
+            d :=  0;
+            assign(f,"hanoi.out");
+            rewrite(f);
+            writeln("-----------------");
+            Hn(n,1,2);
+            writeln(f,"Total: ",d," step(s)");
+            close(f);
+            readln();
+            end
+        procedure main();
+        BEGIN
+        runHn(3);
+        END
+        """
+        expect = "Undeclared Procedure: exit"
+        self.assertTrue(TestChecker.test(input, expect, 362))
+    
+    def test_if63(self):
         input = """
 var conbocuoi4:integer;
     conbocuoi5:boolean;
@@ -1070,9 +969,9 @@ begin
 end
 """
         expect = "Type Mismatch In Statement: If(BinaryOp(+,IntLiteral(5),IntLiteral(5)),[AssignStmt(Id(conbocuoi2),Id(conbocuoi3))],[])"
-        self.assertTrue(TestChecker.test(input,expect,438))
-        
-    def test_TMIS_IF_5(self):
+        self.assertTrue(TestChecker.test(input,expect,363))
+    
+    def test_if64(self):
         input = """
 var conbocuoi4:integer;
     conbocuoi5:boolean;
@@ -1116,50 +1015,9 @@ begin
 end
 """
         expect = "Type Mismatch In Statement: If(BinaryOp(+,IntLiteral(5),IntLiteral(5)),[AssignStmt(Id(conbocuoi2),Id(conbocuoi3))],[])"
-        self.assertTrue(TestChecker.test(input,expect,439))
-        
-# TMIS For: 5
-    def test_TMIS_FOR_1(self):
-        input = """
-var conbocuoi4:integer;
-    conbocuoi5:boolean;
-
-function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
-var conbocuoi4:boolean;
-    conbocuoi5:integer;
-begin
-    conbocuoi2 := 123;
+        self.assertTrue(TestChecker.test(input,expect,364))
     
-    return conbocuoi2;
-end
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
-begin
-    while conbocuoi6 do
-    begin
-        conbocuoi5 := conbocuoi5 + 10;
-        if conbocuoi6 or else not conbocuoi6 then
-            return;
-        continue;
-    end
-    return;
-end
-
-procedure main(); 
-var conbocuoi3:integer;
-    conbocuoi2:real;
-begin
-    for conbocuoi3 := 1 to True do
-    begin
-        conbocuoi2 := conbocuoi2 + 1.0;
-    end
-    return;
-end
-"""
-        expect = "Type Mismatch In Statement: For(Id(conbocuoi3)IntLiteral(1),BooleanLiteral(True),True,[AssignStmt(Id(conbocuoi2),BinaryOp(+,Id(conbocuoi2),FloatLiteral(1.0)))])"
-        self.assertTrue(TestChecker.test(input,expect,440))
-
-    def test_TMIS_FOR_2(self):
+    def test_for65(self):
         input = """
 var conbocuoi4:integer;
     conbocuoi5:boolean;
@@ -1206,9 +1064,9 @@ begin
 end
 """
         expect = "Type Mismatch In Statement: For(Id(conbocuoi3)StringLiteral(conbocuoi1),Id(conbocuoi2),True,[AssignStmt(Id(conbocuoi2),BinaryOp(+,Id(conbocuoi2),FloatLiteral(1.0)))])"
-        self.assertTrue(TestChecker.test(input,expect,441))
-        
-    def test_TMIS_FOR_3(self):
+        self.assertTrue(TestChecker.test(input,expect,365))
+    
+    def test_for66(self):
         input = """
 var conbocuoi4:integer;
     conbocuoi5:boolean;
@@ -1256,61 +1114,9 @@ begin
 end
 """
         expect = "Type Mismatch In Statement: For(Id(conbocuoi2)IntLiteral(1),IntLiteral(10),True,[Break])"
-        self.assertTrue(TestChecker.test(input,expect,442))
-        
-    def test_TMIS_FOR_4(self):
-        input = """
-var conbocuoi4:integer;
-    conbocuoi5:boolean;
+        self.assertTrue(TestChecker.test(input,expect,366))
 
-function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
-var conbocuoi4:boolean;
-    conbocuoi5, conbocuoi:integer;
-begin
-    for conbocuoi := conbocuoi5 downto conbocuoi5 - 100 do
-    begin
-        conbocuoi6(conbocuoi5, True);
-        break;
-    end
-    conbocuoi2 := 123;
-    
-    return conbocuoi2;
-end
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
-var conbocuoi, conbocuoi7:integer;
-begin
-    while conbocuoi6 do
-    begin
-        conbocuoi5 := conbocuoi5 + 10;
-        if conbocuoi6 or else not conbocuoi6 then
-            return;
-        continue;
-    end
-    for conbocuoi := 1 to conbocuoi5 do
-        for conbocuoi7 := conbocuoi + 1 to conbocuoi5 + 100 do
-            continue;
-    return;
-end
-
-procedure main(); 
-var conbocuoi3:integer;
-    conbocuoi2:real;
-begin
-    for conbocuoi3 := 1 + 1 - 100 to 10 * 10 do
-        break;
-        
-    for conbocuoi3 := 1/1 to conbocuoi2 do
-    begin
-        conbocuoi2 := conbocuoi2 + 1.0;
-    end
-    return;
-end
-"""
-        expect = "Type Mismatch In Statement: For(Id(conbocuoi3)BinaryOp(/,IntLiteral(1),IntLiteral(1)),Id(conbocuoi2),True,[AssignStmt(Id(conbocuoi2),BinaryOp(+,Id(conbocuoi2),FloatLiteral(1.0)))])"
-        self.assertTrue(TestChecker.test(input,expect,443))
-        
-    def test_TMIS_FOR_5(self):
+    def test_for67(self):
         input = """
 var conbocuoi4:integer;
     conbocuoi5:boolean;
@@ -1359,11 +1165,561 @@ begin
 end
 """
         expect = "Type Mismatch In Statement: For(Id(conbocuoi5)IntLiteral(1),Id(conbocuoi6),True,[Break])"
-        self.assertTrue(TestChecker.test(input,expect,444))
-        
+        self.assertTrue(TestChecker.test(input,expect,367))
+    
+    def test_param68(self):
+        input = """
+var conbocuoi4:integer;
 
-# TMIS While: 5
-    def test_TMIS_WHILE_1(self):
+function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
+begin
+    return conbocuoi4;
+end
+
+procedure conbocuoi6(conbocuoi5:integer; conbocuoi5:boolean);
+begin
+    return;
+end
+
+procedure main(); 
+var conbocuoi1:integer;
+    conbocuoi2:real;
+    conbocuoi3:string;
+begin
+    return;
+end
+"""
+        expect = "Redeclared Parameter: conbocuoi5"
+        self.assertTrue(TestChecker.test(input,expect,368))
+    
+    def test_return69(self):
+        input = """
+                var a: real;
+                procedure main();
+                var i,j:integer;
+                k:boolean;
+                begin
+                    return 3;
+                end
+            """
+        expect = "Type Mismatch In Statement: Return(Some(IntLiteral(3)))"
+        self.assertTrue(TestChecker.test(input, expect, 369))
+
+    def test_return70(self):
+        input = """
+                var a: real;
+                procedure main();
+                var i,j:integer;
+                k:boolean;
+                begin
+                end
+                function foo():real;
+                var a:boolean;
+                begin
+                return a;
+                end
+            """
+        expect = "Type Mismatch In Statement: Return(Some(Id(a)))"
+        self.assertTrue(TestChecker.test(input, expect, 370))
+
+    def test_return71(self):
+        input = """
+                var a: real;
+                procedure main();
+                var i,j:integer;
+                k:boolean;
+                begin
+                a:= foo();
+                end
+                function foo():real;
+                var a:boolean;
+                begin
+                if a then return 1;
+                else return a;
+                end
+            """
+        expect = "Type Mismatch In Statement: Return(Some(Id(a)))"
+        self.assertTrue(TestChecker.test(input, expect, 371))
+    
+    def test_return72(self):
+        input = """
+                var a: real;
+                procedure main();
+                var i,j:integer;
+                k:boolean;
+                begin
+                a:= foo();
+                end
+                function foo():integer;
+                var a:boolean;
+                begin
+                
+                if a then 
+                    begin
+                        if a then  
+                        begin
+                            return 3;
+                        end
+                        return 3.5;
+                    end
+                else return 4;
+                end
+            """
+        expect = "Type Mismatch In Statement: Return(Some(FloatLiteral(3.5)))"
+        self.assertTrue(TestChecker.test(input, expect, 372))
+    
+    def test_return73(self):
+        input = """
+                var a: real;
+                procedure main();
+                var i,j:integer;
+                k:boolean;
+                begin
+                end
+                function foo():array [1 .. 5] of integer;
+                var a:array[1 .. 6] of integer;
+                begin
+                return a ;
+                end
+            """
+        expect = "Type Mismatch In Statement: Return(Some(Id(a)))"
+        self.assertTrue(TestChecker.test(input, expect, 373))
+    
+    def test_funcall74(self):
+        input = """
+                var a: real;
+                procedure main();
+                var i,j:real;
+                k:boolean;
+                a:string;
+                b:array[1 .. 5] of integer;
+                d:string;
+                begin
+                foo(a,b,b);
+                end
+                procedure FOO(a:string;b,c:array[1 .. 5] of real);
+                var a:array[1 .. 5] of integer;
+                begin
+                end
+            """
+        expect = "Type Mismatch In Statement: CallStmt(Id(foo),[Id(a),Id(b),Id(b)])"
+        self.assertTrue(TestChecker.test(input, expect, 374))
+    
+    def test_arraycell75(self):
+        input = """
+                var a: real;
+                procedure main();
+                var i,j:real;
+                k:boolean;
+                a:string;
+                b:array[1 .. 5] of integer;
+                d:integer;
+                begin
+                i := j := b[2*i];
+                end
+                
+            """
+        expect = "Type Mismatch In Expression: ArrayCell(Id(b),BinaryOp(*,IntLiteral(2),Id(i)))"
+        self.assertTrue(TestChecker.test(input, expect, 375))
+    
+    def test_arraycell76(self):
+        input = """
+                var a: real;
+                procedure main();
+                var i,j:real;
+                k:boolean;
+                a:string;
+                b:array[1 .. 5] of integer;
+                d:integer;
+                begin
+                i := j := b[2*d/4];
+                end
+                
+            """
+        expect = "Type Mismatch In Expression: ArrayCell(Id(b),BinaryOp(/,BinaryOp(*,IntLiteral(2),Id(d)),IntLiteral(4)))"
+        self.assertTrue(TestChecker.test(input, expect, 376))
+    
+    def test_array77(self):
+        input = """
+                var a: real;
+                procedure main();
+                var i,j:real;
+                k:boolean;
+                a:string;
+                b:array[1 .. 5] of integer;
+                d:string;
+                begin
+                i := foo(b[3],b,b);
+                i := foo(b[3],b,b)*3+4-5 div 6;
+
+                end
+                function foo(a:integer;b,c:array[1 .. 5] of integer):integer;
+                var a:array[1 .. 5] of integer;
+                begin
+                return a[3];
+                end
+            """
+        expect = "Redeclared Variable: a"
+        self.assertTrue(TestChecker.test(input, expect, 377))
+    
+    def test_var78(self):
+        input = """
+                var a: real;
+                procedure main();
+                var i,j:real;
+                k:boolean;
+                a:string;
+                b:array[1 .. 5] of integer;
+                d:string;
+                begin
+                i := foo(b[6],b,b);
+                i := foo(b[3],b,b)*3+4-5 div 6;
+
+                end
+                function foo(a:real;b,c:array[1 .. 5] of integer):integer;
+                var b:array[1 .. 5] of integer;
+                begin
+                return a[3];
+                end
+            """
+        expect = "Redeclared Variable: b"
+        self.assertTrue(TestChecker.test(input, expect, 378))
+    
+    def test_noentry79(self):
+        input = """
+                var a: real;
+
+                function main():integer;
+                var j:real;
+                i:integer;
+                k:boolean;
+                a:string;
+                b:array[1 .. 5] of integer;
+                d:string;
+                begin
+                for i := 4 to 5 do
+                begin
+                    for i:= 3 to 4 do
+                    begin 
+                        if i < 3 then continue;
+                        else
+                        begin
+                            for i := 4 to 5 do break;
+                        end
+                    end
+                    if i < 3 then break;
+                end
+                while true do
+                begin 
+                    while false do break;
+                    if i > 5 then continue;
+                    else while false do continue;
+                end
+                end
+            """
+        expect = "No entry point"
+        self.assertTrue(TestChecker.test(input, expect, 379))
+    
+    def test_noentry80(self):
+        input = """
+                var a: real;
+
+                function bar():integer;
+                var j:real;
+                i:integer;
+                k:boolean;
+                a:string;
+                b:array[1 .. 5] of integer;
+                d:string;
+                begin
+                for i := 4 to 5 do
+                begin
+                    for i:= 3 to 4 do
+                    begin 
+                        if i < 3 then continue;
+                        else
+                        begin
+                            for i := 4 to 5 do break;
+                        end
+                    end
+                    if i < 3 then break;
+                end
+                while true do
+                begin 
+                    while false do break;
+                    if i > 5 then continue;
+                    else while false do continue;
+                end
+                end
+            """
+        expect = "No entry point"
+        self.assertTrue(TestChecker.test(input, expect, 380))
+    
+    def test_return81(self):
+        input = """
+                var a: real;
+
+                procedure main();
+                var j:real;
+                i:integer;
+                k:boolean;
+                a:string;
+                b:array[1 .. 5] of integer;
+                d:string;
+                begin
+                i := foo(4);
+                if false then i:=1;
+                while false do i:=1;
+                while true do i:= 1;
+                i:=1;
+                end
+                function foo(a:integer):integer;
+                begin 
+                if false then return 4;
+                end
+            """
+        expect = "Function foo Not Return "
+        self.assertTrue(TestChecker.test(input, expect, 381))
+
+    def test_return82(self):
+        input = """
+                var a: real;
+
+                procedure main();
+                var j:real;
+                i:integer;
+                k:boolean;
+                a:string;
+                b:array[1 .. 5] of integer;
+                d:string;
+                begin
+                if false then i:=1;
+                while false do if true then return; else bar(3);
+                while true do 
+                begin 
+                    for I:= 4 to i+1 do
+                    begin
+                        with a:integer; do
+                            a:= Foo1(a);
+                    end
+                end
+                wITH A:integer; do
+                    a:= foo(a);
+                end
+
+                procedure bar(a:integer);
+                begin 
+                if False then return ;
+                end
+
+                function foO(a:integer):integer;
+                begin 
+                if false then return 4;
+                end
+
+                function foo(a:integer):integer;
+                begin 
+                if false then return 4;
+                end
+
+                
+            """
+        expect = "Redeclared Function: foo"
+        self.assertTrue(TestChecker.test(input, expect, 382))
+    
+    def test_global83(self):
+        input = """
+                var a: string;
+                var k:string;
+                var b:real;
+                procedure main();
+                var i,j:real;
+                K:boolean;
+                A:string;
+                B:array[1 .. 5] of integer;
+                d:integer;
+                begin
+                i := j := b[1];
+                end
+                procedure foo(a:integer);
+                var A:string;
+                begin
+                end
+            """
+        expect = "Redeclared Variable: A"
+        self.assertTrue(TestChecker.test(input, expect, 383))
+    
+    def test_return84(self):
+        input = """
+function conbocuoi1(conbocuoi:integer):integer;
+begin
+    return 1;
+end
+
+function conbocuoi2(conbocuoi:real):real;
+begin
+    if True then return 1.0;
+    
+end
+
+function conbocuoi3(conbocuoi:string):string;
+begin
+    return "conbocuoi";
+end
+
+function conbocuoi4(conbocuoi:array[1 .. 100] of integer):array[1 .. 100] of integer;
+begin
+    return conbocuoi;
+end
+
+function conbocuoi5(conbocuoi:boolean):boolean;
+begin
+    return True;
+end
+
+procedure main(); 
+var c1:integer;
+    c2:real;
+    c5:boolean;
+    c3:string;
+    c4:array[1 .. 100] of integer;
+begin
+    c1 := conbocuoi1(c1);
+    c2 := conbocuoi2(c2);
+    c5 := conbocuoi5(c5);
+    c1 := conbocuoi4(c4)[10];
+    return;
+end
+"""
+        expect = "Function conbocuoi2 Not Return "
+        self.assertTrue(TestChecker.test(input,expect,384))
+    
+    def test_return85(self):
+        input = """
+                var a: string;
+                var k:string;
+                var b:real;
+                procedure main();
+                var i,j:real;
+                K:boolean;
+                A:string;
+                B:array[1 .. 5] of integer;
+                d:integer;
+                begin
+                    i := j := b[1];
+                end
+                function foo(a:integer):integer;
+                var B:string;
+                begin
+                    if true then
+                    begin
+                        if false then return 0.5;
+                        else return 3;
+                    end
+                    else return 1;
+                end
+                
+            """
+        expect = "Type Mismatch In Statement: Return(Some(FloatLiteral(0.5)))"
+        self.assertTrue(TestChecker.test(input, expect, 385))
+    
+    def test_return86(self):
+        input = """
+                var a: string;
+                var k:string;
+                var b:real;
+                procedure main();
+                var i,j:real;
+                K:boolean;
+                A:string;
+                B:array[1 .. 5] of integer;
+                d:integer;
+                begin
+                i := j := b[1] := foo(b[2]);
+                end
+                function foo(a:integer):integer;
+                var B:string;
+                begin
+                    if true then
+                    begin
+                        if false then 
+                            return 1 ;
+                        for a:= 1 to 10 do
+                            begin 
+                                if false then return 5;
+                                if true then return 6;
+                            end
+                    end
+                    else return 1;
+                end
+                
+            """
+        expect = "Function foo Not Return "
+        self.assertTrue(TestChecker.test(input, expect, 386))
+    
+    def test_return87(self):
+        input = """
+                var a: real;
+
+                procedure main();
+                var i,j:real;
+                k:boolean;
+                a:string;
+                b:array[1 .. 5] of integer;
+                d:string;
+                begin
+                i := foo(b[10]);
+                end
+
+                function foo(b:integer):integer;
+                var a:array[1 .. 5] of integer;
+                begin
+                    if b>3 then 
+                    begin
+                        with a,b:integer;do 
+                        begin
+                            if b < 4 then return foo(3);
+                            else 
+                            begin
+                                if b > 5 then return 3;
+                            end
+                        end
+                    end
+                    else return 1;
+                end
+            """
+        expect = "Function foo Not Return "
+        self.assertTrue(TestChecker.test(input, expect, 387))
+    
+    def test_return88(self):
+        input = """
+                var a: real;
+
+                procedure main();
+                var i,j:real;
+                k:boolean;
+                a:string;
+                b:array[1 .. 5] of integer;
+                d:string;
+                begin
+                foo(b[10]);
+                end
+
+                procedure foo(b:integer);
+                var a:array[1 .. 5] of integer;
+                begin
+                    
+                end
+                procedure foo(b:integer);
+                var a:array[1 .. 5] of integer;
+                begin
+                    
+                end
+            """
+        expect = "Redeclared Procedure: foo"
+        self.assertTrue(TestChecker.test(input, expect, 388))
+    
+    def test_while89(self):
         input = """
 var conbocuoi4:integer;
     conbocuoi5:boolean;
@@ -1399,9 +1755,9 @@ begin
 end
 """
         expect = "Type Mismatch In Statement: While(BinaryOp(+,Id(conbocuoi2),Id(conbocuoi3)),[AssignStmt(Id(conbocuoi1),BooleanLiteral(False))])"
-        self.assertTrue(TestChecker.test(input,expect,445))
-
-    def test_TMIS_WHILE_2(self):
+        self.assertTrue(TestChecker.test(input,expect,389))
+    
+    def test_while90(self):
         input = """
 var conbocuoi4:integer;
     conbocuoi5:boolean;
@@ -1440,49 +1796,9 @@ begin
 end
 """
         expect = "Type Mismatch In Statement: While(BinaryOp(+,Id(conbocuoi2),Id(conbocuoi3)),[AssignStmt(Id(conbocuoi1),BooleanLiteral(False))])"
-        self.assertTrue(TestChecker.test(input,expect,446))
-        
-    def test_TMIS_WHILE_3(self):
-        input = """
-var conbocuoi4:integer;
-    conbocuoi5:boolean;
-
-function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
-var conbocuoi4:boolean;
-    conbocuoi5, conbocuoi:integer;
-begin
-    while (conbocuoi4 and True) do
-        break;
-    while (conbocuoi4 and not conbocuoi4 or conbocuoi4) do
-        continue;
-    return conbocuoi2;
-end
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
-var conbocuoi, conbocuoi7:integer;
-    conbocuoi3:boolean;
-begin
-    while (conbocuoi7 + conbocuoi) do
-        break;
+        self.assertTrue(TestChecker.test(input,expect,390))
     
-    return;
-end
-
-procedure main(); 
-var conbocuoi3:integer;
-    conbocuoi2:real;
-    conbocuoi1:boolean;
-begin
-    while (conbocuoi1) do
-        break;
-        
-    return;
-end
-"""
-        expect = "Type Mismatch In Statement: While(BinaryOp(+,Id(conbocuoi7),Id(conbocuoi)),[Break])"
-        self.assertTrue(TestChecker.test(input,expect,447))
-        
-    def test_TMIS_WHILE_4(self):
+    def test_whil91(self):
         input = """
 var conbocuoi4:integer;
     conbocuoi5:boolean;
@@ -1526,51 +1842,9 @@ begin
 end
 """
         expect = "Type Mismatch In Statement: While(BinaryOp(+,Id(conbocuoi2),Id(conbocuoi3)),[AssignStmt(Id(conbocuoi1),BooleanLiteral(False))])"
-        self.assertTrue(TestChecker.test(input,expect,448))
-        
-    def test_TMIS_WHILE_5(self):
-        input = """
-var conbocuoi4:integer;
-    conbocuoi5:boolean;
-
-function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
-var conbocuoi4:boolean;
-    conbocuoi5, conbocuoi:integer;
-begin
-    while (conbocuoi4 and True) do
-        break;
-    while (conbocuoi4 and not conbocuoi4 or conbocuoi4) do
-        continue;
-    return conbocuoi2;
-end
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
-var conbocuoi, conbocuoi7:integer;
-    conbocuoi3:boolean;
-begin
+        self.assertTrue(TestChecker.test(input,expect,391))
     
-    return;
-end
-
-procedure main(); 
-var conbocuoi3:integer;
-    conbocuoi2:real;
-    conbocuoi1:boolean;
-begin
-    while (conbocuoi1) do
-        break;
-        
-    while ("conbocuoi") do
-        break;
-        
-    return;
-end
-"""
-        expect = "Type Mismatch In Statement: While(StringLiteral(conbocuoi),[Break])"
-        self.assertTrue(TestChecker.test(input,expect,449))
-        
-# TMIS Assign: 5
-    def test_TMIS_ASSIGN_1(self):
+    def test_assign92(self):
         input = """
 var conbocuoi4:integer;
     conbocuoi5:boolean;
@@ -1602,405 +1876,9 @@ begin
 end
 """
         expect = "Type Mismatch In Statement: AssignStmt(Id(conbocuoi3),Id(conbocuoi2))"
-        self.assertTrue(TestChecker.test(input,expect,450))
-        
-    def test_TMIS_ASSIGN_2(self):
-        input = """
-var conbocuoi4:integer;
-    conbocuoi5:boolean;
-
-function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
-var conbocuoi4:boolean;
-    conbocuoi5, conbocuoi:integer;
-begin
-
-    return conbocuoi2;
-end
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
-var conbocuoi, conbocuoi7:integer;
-    conbocuoi3:boolean;
-begin
+        self.assertTrue(TestChecker.test(input,expect,392))
     
-    return;
-end
-
-procedure main(); 
-var conbocuoi3:integer;
-    conbocuoi2:real;
-    conbocuoi1:boolean;
-begin
-    conbocuoi2 := conbocuoi3;
-    conbocuoi3 := conbocuoi2 := conbocuoi4 := 10;
-    return;
-end
-"""
-        expect = "Type Mismatch In Statement: AssignStmt(Id(conbocuoi3),Id(conbocuoi2))"
-        self.assertTrue(TestChecker.test(input,expect,451))
-        
-    def test_TMIS_ASSIGN_3(self):
-        input = """
-var conbocuoi4:integer;
-    conbocuoi5:boolean;
-
-function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
-var conbocuoi4:boolean;
-    conbocuoi5, conbocuoi:integer;
-begin
-
-    return conbocuoi2;
-end
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
-var conbocuoi, conbocuoi7:integer;
-    conbocuoi3:boolean;
-begin
-    
-    return;
-end
-
-procedure main(); 
-var conbocuoi3:integer;
-    conbocuoi2:real;
-    conbocuoi1:boolean;
-    conbocuoi7:string;
-begin
-    conbocuoi1 := True;
-    conbocuoi2 := 123.0;
-    conbocuoi3 := 111;
-    conbocuoi7 := "hello";
-    conbocuoi2 := conbocuoi3;
-    return;
-end
-"""
-        expect = "Type Mismatch In Statement: AssignStmt(Id(conbocuoi7),StringLiteral(hello))"
-        self.assertTrue(TestChecker.test(input,expect,452))
-        
-    def test_TMIS_ASSIGN_4(self):
-        input = """
-var conbocuoi4:integer;
-    conbocuoi5:boolean;
-
-function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
-var conbocuoi4:boolean;
-    conbocuoi5, conbocuoi:integer;
-begin
-
-    return conbocuoi2;
-end
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
-var conbocuoi, conbocuoi7:integer;
-    conbocuoi3:boolean;
-begin
-    
-    return;
-end
-
-procedure main(); 
-var conbocuoi3:integer;
-    conbocuoi2:real;
-    conbocuoi1:boolean;
-    conbocuoi7:array[1 .. 100] of integer;
-begin
-    conbocuoi2 := conbocuoi3;
-    conbocuoi2 := conbocuoi7[1];
-    conbocuoi3 := conbocuoi7[10];
-    conbocuoi3 := conbocuoi2;
-    return;
-end
-"""
-        expect = "Type Mismatch In Statement: AssignStmt(Id(conbocuoi3),Id(conbocuoi2))"
-        self.assertTrue(TestChecker.test(input,expect,453))
-        
-    def test_TMIS_ASSIGN_5(self):
-        input = """
-var conbocuoi4:integer;
-    conbocuoi5:boolean;
-
-function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
-var conbocuoi4:boolean;
-    conbocuoi5, conbocuoi:integer;
-begin
-
-    return conbocuoi2;
-end
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
-var conbocuoi, conbocuoi7:integer;
-    conbocuoi3:boolean;
-begin
-    conbocuoi3 := True;
-    conbocuoi := conbocuoi7 + 100;
-    return;
-end
-
-procedure main(); 
-var conbocuoi3:integer;
-    conbocuoi2:real;
-    conbocuoi1:boolean;
-begin
-    conbocuoi2 := conbocuoi3;
-    conbocuoi3 := conbocuoi2;
-    return;
-end
-"""
-        expect = "Type Mismatch In Statement: AssignStmt(Id(conbocuoi3),Id(conbocuoi2))"
-        self.assertTrue(TestChecker.test(input,expect,454))
-        
-# TMIS Return: 5
-    def test_TMIS_RETURN_1(self):
-        input = """
-var conbocuoi4:integer;
-    conbocuoi5:boolean;
-
-function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
-var conbocuoi4:boolean;
-    conbocuoi5, conbocuoi:integer;
-begin
-
-    return conbocuoi4;
-end
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
-var conbocuoi, conbocuoi7:integer;
-    conbocuoi3:boolean;
-begin
-
-    return;
-end
-
-procedure main(); 
-var conbocuoi:integer;
-    conbocuoi2:real;
-    conbocuoi1:boolean;
-begin
-    conbocuoi := conbocuoi3("conbocuoi", conbocuoi);
-    conbocuoi2 := conbocuoi3("conbocuoi", conbocuoi);
-    return;
-end
-"""
-        expect = "Type Mismatch In Statement: Return(Some(Id(conbocuoi4)))"
-        self.assertTrue(TestChecker.test(input,expect,455))
-
-    def test_TMIS_RETURN_2(self):
-        input = """
-var conbocuoi4:integer;
-    conbocuoi5:boolean;
-
-function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
-var conbocuoi4:boolean;
-    conbocuoi5, conbocuoi:integer;
-begin
-
-    return conbocuoi2;
-end
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
-var conbocuoi, conbocuoi7:integer;
-    conbocuoi3:boolean;
-begin
-
-    return conbocuoi3;
-end
-
-procedure main(); 
-var conbocuoi:integer;
-    conbocuoi2:real;
-    conbocuoi1:boolean;
-begin
-    conbocuoi := conbocuoi3("conbocuoi", conbocuoi);
-    conbocuoi2 := conbocuoi3("conbocuoi", conbocuoi);
-    return;
-end
-"""
-        expect = "Type Mismatch In Statement: Return(Some(Id(conbocuoi3)))"
-        self.assertTrue(TestChecker.test(input,expect,456))
-
-    def test_TMIS_RETURN_3(self):
-        input = """
-var conbocuoi4:integer;
-    conbocuoi5:boolean;
-
-function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):array [1 .. 100] of string;
-var conbocuoi4:boolean;
-    conbocuoi5, conbocuoi:integer;
-    conbocuoi6:array [1 .. 100] of string;
-    conbocuoi7:array [1 .. 200] of integer;
-begin
-    return conbocuoi6;
-end
-
-function conbocuoi8(conbocuoi1:string; conbocuoi2:integer):array [1 .. 100] of string;
-var conbocuoi4:boolean;
-    conbocuoi5, conbocuoi:integer;
-    conbocuoi6:array [1 .. 100] of string;
-    conbocuoi7:array [1 .. 200] of integer;
-begin
-    return conbocuoi7;
-end
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
-var conbocuoi, conbocuoi7:integer;
-    conbocuoi3:boolean;
-begin
-
-    return;
-end
-
-procedure main(); 
-var conbocuoi:integer;
-    conbocuoi2:real;
-    conbocuoi1:boolean;
-begin
-    conbocuoi := conbocuoi3("conbocuoi", conbocuoi);
-    conbocuoi2 := conbocuoi3("conbocuoi", conbocuoi);
-    return;
-end
-"""
-        expect = "Type Mismatch In Statement: Return(Some(Id(conbocuoi7)))"
-        self.assertTrue(TestChecker.test(input,expect,457))
-        
-    def test_TMIS_RETURN_4(self):
-        input = """
-var conbocuoi4:integer;
-    conbocuoi5:boolean;
-
-function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):integer;
-var conbocuoi4:boolean;
-    conbocuoi5, conbocuoi:integer;
-begin
-
-    return 100 + 200;
-end
-
-function conbocuoi9(conbocuoi1:string; conbocuoi2:integer):boolean;
-var conbocuoi4:boolean;
-    conbocuoi5, conbocuoi:integer;
-begin
-
-    return conbocuoi5;
-end
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
-var conbocuoi, conbocuoi7:integer;
-    conbocuoi3:boolean;
-begin
-
-    return;
-end
-
-procedure main(); 
-var conbocuoi:integer;
-    conbocuoi2:real;
-    conbocuoi1:boolean;
-begin
-    conbocuoi := conbocuoi3("conbocuoi", conbocuoi);
-    conbocuoi2 := conbocuoi3("conbocuoi", conbocuoi);
-    return;
-end
-"""
-        expect = "Type Mismatch In Statement: Return(Some(Id(conbocuoi5)))"
-        self.assertTrue(TestChecker.test(input,expect,458))
-        
-    def test_TMIS_RETURN_5(self):
-        input = """
-var conbocuoi4:integer;
-    conbocuoi5:boolean;
-
-function conbocuoi3(conbocuoi1:string; conbocuoi2:integer):real;
-var conbocuoi4:boolean;
-    conbocuoi5, conbocuoi:integer;
-begin
-
-    return conbocuoi5;
-end
-
-function conbocuoi8(conbocuoi1:string; conbocuoi2:integer):real;
-var conbocuoi4:boolean;
-    conbocuoi5, conbocuoi:integer;
-begin
-
-    return "buon ngu qua di";
-end
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:boolean);
-var conbocuoi, conbocuoi7:integer;
-    conbocuoi3:boolean;
-begin
-
-    return;
-end
-
-procedure main(); 
-var conbocuoi:integer;
-    conbocuoi2:real;
-    conbocuoi1:boolean;
-begin
-    conbocuoi := conbocuoi3("conbocuoi", conbocuoi);
-    conbocuoi2 := conbocuoi3("conbocuoi", conbocuoi);
-    return;
-end
-"""
-        expect = "Type Mismatch In Statement: Return(Some(StringLiteral(buon ngu qua di)))"
-        self.assertTrue(TestChecker.test(input,expect,459))
-        
-# TMIS Procedure Call: 5
-    def test_TMIS_PROCEDURE_1(self):
-        input = """
-var conbocuoi4:integer;
-    conbocuoi5:boolean;
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:real; conbocuoi8:boolean);
-var conbocuoi, conbocuoi7:integer;
-    conbocuoi3:boolean;
-begin
-
-    return;
-end
-
-procedure main(); 
-var conbocuoi:integer;
-    conbocuoi2:real;
-    conbocuoi1:boolean;
-begin
-    conbocuoi6(conbocuoi, conbocuoi2, conbocuoi1);
-    conbocuoi6(conbocuoi, conbocuoi, conbocuoi1);
-    conbocuoi6(conbocuoi, conbocuoi2, conbocuoi2);
-    return;
-end
-"""
-        expect = "Type Mismatch In Statement: CallStmt(Id(conbocuoi6),[Id(conbocuoi),Id(conbocuoi2),Id(conbocuoi2)])"
-        self.assertTrue(TestChecker.test(input,expect,460))
-        
-    def test_TMIS_PROCEDURE_2(self):
-        input = """
-var conbocuoi4:integer;
-    conbocuoi5:boolean;
-
-procedure conbocuoi6(conbocuoi5:integer; conbocuoi6:real; conbocuoi8:boolean);
-var conbocuoi, conbocuoi7:integer;
-    conbocuoi3:boolean;
-begin
-
-    return;
-end
-
-procedure main(); 
-var conbocuoi:integer;
-    conbocuoi2:real;
-    conbocuoi1:boolean;
-begin
-    conbocuoi6(conbocuoi, conbocuoi2, conbocuoi1);
-    conbocuoi6(conbocuoi, conbocuoi, conbocuoi1);
-    conbocuoi6(conbocuoi2, conbocuoi2, conbocuoi2);
-    return;
-end
-"""
-        expect = "Type Mismatch In Statement: CallStmt(Id(conbocuoi6),[Id(conbocuoi2),Id(conbocuoi2),Id(conbocuoi2)])"
-        self.assertTrue(TestChecker.test(input,expect,461))
-        
-    def test_TMIS_PROCEDURE_3(self):
+    def test_call93(self):
         input = """
 var conbocuoi4:integer;
     conbocuoi5:boolean;
@@ -2025,63 +1903,9 @@ begin
 end
 """
         expect = "Type Mismatch In Statement: CallStmt(Id(conbocuoi6),[Id(conbocuoi1),Id(conbocuoi2),Id(conbocuoi2)])"
-        self.assertTrue(TestChecker.test(input,expect,462))
-        
-    def test_TMIS_PROCEDURE_4(self):
-        input = """
-var conbocuoi4:integer;
-    conbocuoi5:boolean;
-
-procedure conbocuoi6(conbocuoi8:array [1 .. 100] of integer);
-var conbocuoi, conbocuoi7:integer;
-    conbocuoi3:boolean;
-begin
-
-    return;
-end
-
-procedure main(); 
-var conbocuoi:array[1 .. 100] of integer;
-    conbocuoi2:array[1 .. 100] of real;
-    conbocuoi1:boolean;
-begin
-    conbocuoi6(conbocuoi);
-    conbocuoi6(conbocuoi2);
-    return;
-end
-"""
-        expect = "Type Mismatch In Statement: CallStmt(Id(conbocuoi6),[Id(conbocuoi2)])"
-        self.assertTrue(TestChecker.test(input,expect,463))
-        
-    def test_TMIS_PROCEDURE_5(self):
-        input = """
-var conbocuoi4:integer;
-    conbocuoi5:boolean;
-
-procedure conbocuoi6(conbocuoi5:string);
-var conbocuoi, conbocuoi7:integer;
-    conbocuoi3:boolean;
-begin
-
-    return;
-end
-
-procedure main(); 
-var conbocuoi:integer;
-    conbocuoi2:real;
-    conbocuoi1:boolean;
-begin
-    conbocuoi6("123123123");
-    conbocuoi6("buon ngu qua hu hu");
-    conbocuoi6(conbocuoi, "hehe");
-    return;
-end
-"""
-        expect = "Type Mismatch In Statement: CallStmt(Id(conbocuoi6),[Id(conbocuoi),StringLiteral(hehe)])"
-        self.assertTrue(TestChecker.test(input,expect,464))
-
-# TMIE Array: 5
-    def test_TMIE_ARRAY_1(self):
+        self.assertTrue(TestChecker.test(input,expect,393))
+    
+    def test_array94(self):
         input = """
 procedure main(); 
 var conbocuoi1:array [1 .. 100] of integer;
@@ -2100,9 +1924,9 @@ begin
 end
 """
         expect = "Type Mismatch In Statement: AssignStmt(Id(c3),ArrayCell(Id(conbocuoi1),IntLiteral(3)))"
-        self.assertTrue(TestChecker.test(input,expect,465))
-
-    def test_TMIE_ARRAY_2(self):
+        self.assertTrue(TestChecker.test(input,expect,394))
+    
+    def test_array95(self):
         input = """
 procedure main(); 
 var conbocuoi1:array [1 .. 100] of integer;
@@ -2121,9 +1945,9 @@ begin
 end
 """
         expect = "Type Mismatch In Expression: ArrayCell(Id(conbocuoi3),StringLiteral(1))"
-        self.assertTrue(TestChecker.test(input,expect,466))
-
-    def test_TMIE_ARRAY_3(self):
+        self.assertTrue(TestChecker.test(input,expect,395))
+    
+    def test_array96(self):
         input = """
 procedure main(); 
 var conbocuoi1:array [1 .. 100] of integer;
@@ -2141,29 +1965,9 @@ begin
 end
 """
         expect = "Type Mismatch In Expression: ArrayCell(Id(conbocuoi3),BinaryOp(/,IntLiteral(3),IntLiteral(3)))"
-        self.assertTrue(TestChecker.test(input,expect,467))
-        
-    def test_TMIE_ARRAY_4(self):
-        input = """
-procedure main(); 
-var conbocuoi1:array [1 .. 100] of integer;
-    conbocuoi2:array [1 .. 100] of real;
-    conbocuoi3:array [1 .. 100] of boolean;
-    c1:integer;
-    c2:real;
-    c3:boolean;
-    c4:string;
-begin
-    c1 := conbocuoi1[1];
-    c2 := conbocuoi2[2];
-    c3 := conbocuoi3[True and False];
-    return;
-end
-"""
-        expect = "Type Mismatch In Expression: ArrayCell(Id(conbocuoi3),BinaryOp(and,BooleanLiteral(True),BooleanLiteral(False)))"
-        self.assertTrue(TestChecker.test(input,expect,468))
-        
-    def test_TMIE_ARRAY_5(self):
+        self.assertTrue(TestChecker.test(input,expect,396))
+    
+    def test_array97(self):
         input = """
 procedure main(); 
 var conbocuoi1:array [1 .. 100] of integer;
@@ -2181,181 +1985,53 @@ begin
 end
 """
         expect = "Type Mismatch In Expression: ArrayCell(Id(c1),IntLiteral(3))"
-        self.assertTrue(TestChecker.test(input,expect,469))
-        
+        self.assertTrue(TestChecker.test(input,expect,397))
+    
+    def test_return98(self):
+        input = """
+function conbocuoi1(conbocuoi:integer):integer;
+begin
+    
+end
 
-# TMIE Bin Exp: 5
-    def test_TMIE_BIN_1(self):
-        input = """
-procedure main(); 
-var c1:integer;
-    c2:real;
-    c3:boolean;
-    c4:string;
+function conbocuoi2(conbocuoi:real):real;
 begin
-    c1 := c1 + c1;
-    c2 := c1 + c2;
-    c2 := c1 + c1;
-    c2 := c2 + c2;
-    c3 := c1 - c3;
-    return;
+    return 1.0;
 end
-"""
-        expect = "Type Mismatch In Expression: BinaryOp(-,Id(c1),Id(c3))"
-        self.assertTrue(TestChecker.test(input,expect,470))
-        
-    def test_TMIE_BIN_2(self):
-        input = """
-procedure main(); 
-var c1:integer;
-    c2:real;
-    c3:boolean;
-    c4:string;
-begin
-    c1 := c1 - c1;
-    c2 := c1 * c2;
-    c2 := c1 / c1;
-    c2 := c2 + c2;
-    c3 := c3 and c3;
-    c3 := c1 / c3;
-    return;
-end
-"""
-        expect = "Type Mismatch In Expression: BinaryOp(/,Id(c1),Id(c3))"
-        self.assertTrue(TestChecker.test(input,expect,471))
-        
-    def test_TMIE_BIN_3(self):
-        input = """
-procedure main(); 
-var c1:integer;
-    c2:real;
-    c3:boolean;
-    c4:string;
-begin
-    c1 := c1 + c1;
-    c2 := c1 + c2;
-    c2 := c1 + c1;
-    c2 := c2 + c2;
-    c3 := c1 and then c4;
-    return;
-end
-"""
-        expect = "Type Mismatch In Expression: BinaryOp(andthen,Id(c1),Id(c4))"
-        self.assertTrue(TestChecker.test(input,expect,472))
-        
-    def test_TMIE_BIN_4(self):
-        input = """
-procedure main(); 
-var c1:integer;
-    c2:real;
-    c3:boolean;
-    c4:string;
-begin
-    c1 := c1 div c1;
-    c2 := c1 + c2;
-    c2 := c1 + c1;
-    c2 := c2 + c2;
-    c3 := c1 > c2;
-    c3 := c1 <= c2;
-    c3 := c1 mod c3;
-    return;
-end
-"""
-        expect = "Type Mismatch In Expression: BinaryOp(mod,Id(c1),Id(c3))"
-        self.assertTrue(TestChecker.test(input,expect,473))
-        
-    def test_TMIE_BIN_5(self):
-        input = """
-procedure main(); 
-var c1:integer;
-    c2:real;
-    c3:boolean;
-    c4:string;
-begin
-    c1 := c1 mod c1;
-    c2 := c1 + c2;
-    c3 := c2 <> c1;
-    c3 := c1 div c3;
-    return;
-end
-"""
-        expect = "Type Mismatch In Expression: BinaryOp(div,Id(c1),Id(c3))"
-        self.assertTrue(TestChecker.test(input,expect,474))
 
-# TMIE Un Exp: 5
-    def test_TMIE_UN_1(self):
-        input = """
+function conbocuoi3(conbocuoi:string):string;
+begin
+    return "conbocuoi";
+end
+
+function conbocuoi4(conbocuoi:array[1 .. 100] of integer):array[1 .. 100] of integer;
+begin
+    return conbocuoi;
+end
+
+function conbocuoi5(conbocuoi:boolean):boolean;
+begin
+    return True;
+end
+
 procedure main(); 
 var c1:integer;
     c2:real;
-    c3:boolean;
-    c4:string;
+    c5:boolean;
+    c3:string;
+    c4:array[1 .. 100] of integer;
 begin
-    c1 := -c1;
-    c2 := -c2;
-    c3 := not c3;
-    c1 := -c4;
+    c1 := conbocuoi1(c1);
+    c2 := conbocuoi2(c2);
+    c5 := conbocuoi5(c5);
+    c1 := conbocuoi4(c4)[10];
     return;
 end
 """
-        expect = "Type Mismatch In Expression: UnaryOp(-,Id(c4))"
-        self.assertTrue(TestChecker.test(input,expect,475))
-        
-    def test_TMIE_UN_2(self):
-        input = """
-procedure main(); 
-var c1:integer;
-    c2:real;
-    c3:boolean;
-    c4:string;
-begin
-    c1 := -c1;
-    c2 := -c2;
-    c3 := not c3;
-    c1 := -c3;
-    return;
-end
-"""
-        expect = "Type Mismatch In Expression: UnaryOp(-,Id(c3))"
-        self.assertTrue(TestChecker.test(input,expect,476))
-        
-    def test_TMIE_UN_3(self):
-        input = """
-procedure main(); 
-var c1:integer;
-    c2:real;
-    c3:boolean;
-    c4:string;
-begin
-    c1 := -c1;
-    c2 := -c2;
-    c3 := not c3;
-    c1 := not c4;
-    return;
-end
-"""
-        expect = "Type Mismatch In Expression: UnaryOp(not,Id(c4))"
-        self.assertTrue(TestChecker.test(input,expect,477))
-        
-    def test_TMIE_UN_4(self):
-        input = """
-procedure main(); 
-var c1:integer;
-    c2:real;
-    c3:boolean;
-    c4:string;
-begin
-    c1 := -c1;
-    c2 := -c2;
-    c3 := not c3;
-    c1 := not c1;
-    return;
-end
-"""
-        expect = "Type Mismatch In Expression: UnaryOp(not,Id(c1))"
-        self.assertTrue(TestChecker.test(input,expect,478))
-        
-    def test_TMIE_UN_5(self):
+        expect = "Function conbocuoi1 Not Return "
+        self.assertTrue(TestChecker.test(input,expect,398))
+    
+    def test_UnOp99(self):
         input = """
 procedure main(); 
 var c1:integer;
@@ -2371,536 +2047,4 @@ begin
 end
 """
         expect = "Type Mismatch In Expression: UnaryOp(-,UnaryOp(not,BooleanLiteral(False)))"
-        self.assertTrue(TestChecker.test(input,expect,479))
-
-# TMIE Function Call: 5
-    
-
-  
-        
-   
-        
-    
-        
-    
-        
-# Func not return: 5
-    def test_NOT_RETURN_1(self):
-        input = """
-function conbocuoi1(conbocuoi:integer):integer;
-begin
-    return 1;
-end
-
-function conbocuoi2(conbocuoi:real):real;
-begin
-    return 1.0;
-end
-
-function conbocuoi3(conbocuoi:string):string;
-begin
-    return "conbocuoi";
-end
-
-function conbocuoi4(conbocuoi:array[1 .. 100] of integer):array[1 .. 100] of integer;
-begin
-    return conbocuoi;
-end
-
-function conbocuoi5(conbocuoi:boolean):boolean;
-begin
-    return True;
-end
-
-procedure main(); 
-var c1:integer;
-    c2:real;
-    c5:boolean;
-    c3:string;
-    c4:array[1 .. 100] of integer;
-begin
-    c1 := conbocuoi1(c1);
-    c2 := conbocuoi2(c2);
-    c5 := conbocuoi5(c5);
-    c1 := conbocuoi4(c4)[10];
-    return;
-end
-"""
-        expect = "Function conbocuoi1 Not Return "
-        self.assertTrue(TestChecker.test(input,expect,485))
-        
-    def test_NOT_RETURN_2(self):
-        input = """
-function conbocuoi1(conbocuoi:integer):integer;
-begin
-    return 1;
-end
-
-function conbocuoi2(conbocuoi:real):real;
-begin
-    if True then return 1.0;
-    
-end
-
-function conbocuoi3(conbocuoi:string):string;
-begin
-    return "conbocuoi";
-end
-
-function conbocuoi4(conbocuoi:array[1 .. 100] of integer):array[1 .. 100] of integer;
-begin
-    return conbocuoi;
-end
-
-function conbocuoi5(conbocuoi:boolean):boolean;
-begin
-    return True;
-end
-
-procedure main(); 
-var c1:integer;
-    c2:real;
-    c5:boolean;
-    c3:string;
-    c4:array[1 .. 100] of integer;
-begin
-    c1 := conbocuoi1(c1);
-    c2 := conbocuoi2(c2);
-    c5 := conbocuoi5(c5);
-    c1 := conbocuoi4(c4)[10];
-    return;
-end
-"""
-        expect = "Function conbocuoi2 Not Return "
-        self.assertTrue(TestChecker.test(input,expect,486))
-        
-    def test_NOT_RETURN_3(self):
-        input = """
-function conbocuoi1(conbocuoi:integer):integer;
-begin
-    while True do
-        return 1;
-        
-end
-
-function conbocuoi2(conbocuoi:real):real;
-begin
-    return 1.0;
-end
-
-function conbocuoi3(conbocuoi:string):string;
-begin
-    return "conbocuoi";
-end
-
-function conbocuoi4(conbocuoi:array[1 .. 100] of integer):array[1 .. 100] of integer;
-begin
-    return conbocuoi;
-end
-
-function conbocuoi5(conbocuoi:boolean):boolean;
-begin
-    return True;
-end
-
-procedure main(); 
-var c1:integer;
-    c2:real;
-    c5:boolean;
-    c3:string;
-    c4:array[1 .. 100] of integer;
-begin
-    c1 := conbocuoi1(c1);
-    c2 := conbocuoi2(c2);
-    c5 := conbocuoi5(c5);
-    c1 := conbocuoi4(c4)[10];
-    return;
-end
-"""
-        expect = "Function conbocuoi1 Not Return "
-        self.assertTrue(TestChecker.test(input,expect,487))
-        
-    def test_NOT_RETURN_4(self):
-        input = """
-function conbocuoi1(conbocuoi:integer):integer;
-begin
-    if True then return 1; else return 2;
-end
-
-function conbocuoi2(conbocuoi:real):real;
-begin
-    
-end
-
-function conbocuoi3(conbocuoi:string):string;
-begin
-    return "conbocuoi";
-end
-
-function conbocuoi4(conbocuoi:array[1 .. 100] of integer):array[1 .. 100] of integer;
-begin
-    return conbocuoi;
-end
-
-function conbocuoi5(conbocuoi:boolean):boolean;
-begin
-    return True;
-end
-
-procedure main(); 
-var c1:integer;
-    c2:real;
-    c5:boolean;
-    c3:string;
-    c4:array[1 .. 100] of integer;
-begin
-    c1 := conbocuoi1(c1);
-    c2 := conbocuoi2(c2);
-    c5 := conbocuoi5(c5);
-    c1 := conbocuoi4(c4)[10];
-    return;
-end
-"""
-        expect = "Function conbocuoi2 Not Return "
-        self.assertTrue(TestChecker.test(input,expect,488))
-        
-    def test_NOT_RETURN_1(self):
-        input = """
-function conbocuoi1(conbocuoi:integer):integer;
-begin
-    return 1;
-end
-
-function conbocuoi2(conbocuoi:real):real;
-begin
-    return 1.0;
-end
-
-function conbocuoi3(conbocuoi:string):string;
-begin
-    return "conbocuoi";
-end
-
-function conbocuoi4(conbocuoi:array[1 .. 100] of integer):array[1 .. 100] of integer;
-begin
-    return conbocuoi;
-end
-
-function conbocuoi5(conbocuoi:boolean):boolean;
-begin
-
-end
-
-procedure main(); 
-var c1:integer;
-    c2:real;
-    c5:boolean;
-    c3:string;
-    c4:array[1 .. 100] of integer;
-begin
-    c1 := conbocuoi1(c1);
-    c2 := conbocuoi2(c2);
-    c5 := conbocuoi5(c5);
-    c1 := conbocuoi4(c4)[10];
-    return;
-end
-"""
-        expect = "Function conbocuoi5 Not Return "
-        self.assertTrue(TestChecker.test(input,expect,489))
-        
-# Break/Continue: 5
-    def test_NOT_RETURN_1(self):
-        input = """
-function conbocuoi1(conbocuoi:integer):integer;
-begin
-    continue;
-    return 10;
-end
-
-procedure conbocuoi2(conbocuoi:integer);
-begin
-    return;
-end
-
-procedure main();
-begin
-    
-    return;
-end
-"""
-        expect = "Continue Not In Loop"
-        self.assertTrue(TestChecker.test(input,expect,490))
-        
-    def test_NOT_RETURN_2(self):
-        input = """
-function conbocuoi1(conbocuoi:integer):integer;
-begin
-    break;
-    return 10;
-end
-
-procedure conbocuoi2(conbocuoi:integer);
-begin
-    return;
-end
-
-procedure main();
-begin
-    
-    return;
-end
-"""
-        expect = "Break Not In Loop"
-        self.assertTrue(TestChecker.test(input,expect,491))
-        
-    def test_NOT_RETURN_3(self):
-        input = """
-function conbocuoi1(conbocuoi:integer):integer;
-begin
-    return 10;
-end
-
-procedure conbocuoi2(conbocuoi:integer);
-begin
-    return;
-end
-
-procedure main();
-begin
-    if True then break;
-    return;
-end
-"""
-        expect = "Break Not In Loop"
-        self.assertTrue(TestChecker.test(input,expect,492))
-        
-    def test_NOT_RETURN_4(self):
-        input = """
-function conbocuoi1(conbocuoi:integer):integer;
-begin
-    return 10;
-end
-
-procedure conbocuoi2(conbocuoi:integer);
-begin
-    for conbocuoi := 1 to 100 do
-    begin
-        conbocuoi := 10;
-        if conbocuoi < 10 then
-            break;
-        if conbocuoi > 10 then
-            continue;
-        
-        conbocuoi := 20;
-        
-    end
-    return;
-end
-
-procedure main();
-begin
-    break;
-    return;
-end
-"""
-        expect = "Break Not In Loop"
-        self.assertTrue(TestChecker.test(input,expect,493))
-        
-    def test_NOT_RETURN_5(self):
-        input = """
-function conbocuoi1(conbocuoi:integer):integer;
-begin
-    for conbocuoi := 1 to 10 do
-    begin
-        for conbocuoi := 1 to 10 do
-            break;
-        while conbocuoi < 10 do
-            continue;
-        if conbocuoi > 1 then break; else continue;
-    end
-    
-    return 10;
-end
-
-procedure conbocuoi2(conbocuoi:integer);
-begin
-    return;
-end
-
-procedure main();
-begin
-    continue;
-    return;
-end
-"""
-        expect = "Continue Not In Loop"
-        self.assertTrue(TestChecker.test(input,expect,494))
-
-# No Entry Point: 1
-    def test_NO_ENTRY(self):
-        input = """
-function conbocuoi1(conbocuoi:integer):integer;
-begin
-    for conbocuoi := 1 to 10 do
-    begin
-        for conbocuoi := 1 to 10 do
-            break;
-        while conbocuoi < 10 do
-            continue;
-        if conbocuoi > 1 then break; else continue;
-    end
-    
-    return 10;
-end
-
-procedure conbocuoi2(conbocuoi:integer);
-begin
-    return;
-end
-"""
-        expect = "No entry point"
-        self.assertTrue(TestChecker.test(input,expect,495))
-        
-# Unreachable Stmt: 2
-
-#     def test_UR_STMT_1(self):
-#         input = """
-# function conbocuoi1(conbocuoi:integer):integer;
-# begin
-#     for conbocuoi := 1 to 10 do
-#     begin
-#         for conbocuoi := 1 to 10 do
-#             break;
-#         while conbocuoi < 10 do
-#             continue;
-#         if conbocuoi > 1 then break; else continue;
-#         break;
-#         conbocuoi := conbocuoi + 10;
-#     end
-    
-#     return 10;
-# end
-
-# procedure conbocuoi2(conbocuoi:integer);
-# begin
-#     return;
-# end
-
-# procedure main();
-# begin
-#     return;
-# end
-# """
-#         expect = "Unreachable statement: AssignStmt(Id(conbocuoi),BinaryOp(+,Id(conbocuoi),IntLiteral(10)))"
-#         self.assertTrue(TestChecker.test(input,expect,496))
-        
-#     def test_UR_STMT_2(self):
-#         input = """
-# function conbocuoi1(conbocuoi:integer):integer;
-# begin
-#     for conbocuoi := 1 to 10 do
-#     begin
-#         for conbocuoi := 1 to 10 do
-#             break;
-#         while conbocuoi < 10 do
-#             continue;
-#         if conbocuoi > 1 then break; else continue;
-#     end
-    
-#     return 10;
-# end
-
-# procedure conbocuoi2(conbocuoi:integer);
-# begin
-#     while True do
-#     begin
-#         conbocuoi := conbocuoi + 10;
-#         return;
-#         conbocuoi := 100;
-#     end
-#     return;
-# end
-
-# procedure main();
-# begin
-#     return;
-# end
-# """
-#         expect = "Unreachable statement: AssignStmt(Id(conbocuoi),IntLiteral(100))"
-#         self.assertTrue(TestChecker.test(input,expect,497))
-        
-# Unreachable Function/Procedure: 2
-
-#     def test_UR_FP_1(self):
-#         input = """
-# function conbocuoi1(conbocuoi:integer):integer;
-# begin
-#     for conbocuoi := 1 to 10 do
-#     begin
-#         for conbocuoi := 1 to 10 do
-#             break;
-#         while conbocuoi < 10 do
-#             continue;
-#         if conbocuoi > 1 then break; else continue;
-#     end
-    
-#     return 10;
-# end
-
-# procedure conbocuoi2(conbocuoi:integer);
-# begin
-#     while True do
-#     begin
-#         conbocuoi := conbocuoi + 10;
-#         return;
-#     end
-#     return;
-# end
-
-# procedure main();
-# begin
-#     conbocuoi2(100);
-#     return;
-# end
-# """
-#         expect = "Unreachable Function: conbocuoi1"
-#         self.assertTrue(TestChecker.test(input,expect,498))
-        
-#     def test_UR_FP_1(self):
-#         input = """
-# function conbocuoi1(conbocuoi:integer):integer;
-# begin
-#     for conbocuoi := 1 to 10 do
-#     begin
-#         for conbocuoi := 1 to 10 do
-#             break;
-#         while conbocuoi < 10 do
-#             continue;
-#         if conbocuoi > 1 then break; else continue;
-#     end
-    
-#     return 10;
-# end
-
-# procedure conbocuoi2(conbocuoi:integer);
-# begin
-#     while True do
-#     begin
-#         conbocuoi := conbocuoi + 10;
-#         return;
-#     end
-#     return;
-# end
-
-# procedure main();
-# var conbocuoi:integer;
-# begin
-#     conbocuoi := conbocuoi1(696969696969696969696969696969696969696969696969);
-#     return;
-# end
-# """
-#         expect = "Unreachable Procedure: conbocuoi2"
-#         self.assertTrue(TestChecker.test(input,expect,499))
-
-    
-    
+        self.assertTrue(TestChecker.test(input,expect,399))

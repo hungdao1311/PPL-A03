@@ -1,0 +1,1 @@
+Type Mismatch In Statement: AssignStmt(Id(conbocuoi3),Id(conbocuoi2))

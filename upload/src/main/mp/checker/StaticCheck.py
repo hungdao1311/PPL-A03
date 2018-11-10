@@ -101,7 +101,7 @@ class StaticChecker(BaseVisitor,Utils):
     def visitBinaryOp(self, ast, c):
         left_type = type(self.visit(ast.left,c))
         right_type = type(self.visit(ast.right,c))
-        if ast.op in ['andthen','orelse','and','or']:
+        if ast.op.lower() in ['andthen','orelse','and','or']:
             if left_type is BoolType:
                 if right_type is BoolType:
                     return BoolType()
@@ -109,7 +109,7 @@ class StaticChecker(BaseVisitor,Utils):
                     raise TypeMismatchInExpression(ast)
             else: 
                 raise TypeMismatchInExpression(ast)
-        elif ast.op in ['div','mod']:
+        elif ast.op.lower() in ['div','mod']:
             if left_type is IntType:
                 if right_type is IntType:
                     return IntType()
@@ -140,7 +140,7 @@ class StaticChecker(BaseVisitor,Utils):
     
     def visitUnaryOp(self, ast, c):
         operand_type = type(self.visit(ast.body,c))
-        if ast.op == 'not':
+        if ast.op.lower() == 'not':
             if operand_type is BoolType:
                 return BoolType()
             else:

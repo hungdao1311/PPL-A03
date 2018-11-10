@@ -1,0 +1,10 @@
+
+procedure main();
+                
+                begin
+                    while true do putstring(a);
+                    b:=2;
+    
+                end
+                var a:String;
+        

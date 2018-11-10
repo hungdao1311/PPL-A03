@@ -1,0 +1,15 @@
+
+procedure main(); 
+var conbocuoi1:array [1 .. 100] of integer;
+    conbocuoi2:array [1 .. 100] of real;
+    conbocuoi3:array [1 .. 100] of boolean;
+    c1:integer;
+    c2:real;
+    c3:boolean;
+    c4:string;
+begin
+    c1 := conbocuoi1[1];
+    c2 := conbocuoi2[2];
+    c3 := conbocuoi3[3/3];
+    return;
+end

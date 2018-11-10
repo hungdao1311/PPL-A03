@@ -1,0 +1,1 @@
+Type Mismatch In Statement: AssignStmt(ArrayCell(Id(myBoolArray),BinaryOp(+,Id(i),IntLiteral(2))),IntLiteral(3))

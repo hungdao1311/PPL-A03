@@ -1,0 +1,10 @@
+
+Var name, surname: String;
+Procedure main();
+Begin
+	write("Enter your name:");
+	readln(name);
+	writeln("Your name is: ",name);
+	readln();
+End
+        

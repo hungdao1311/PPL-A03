@@ -1,0 +1,17 @@
+
+var c4:integer;
+
+function c3(c1:string; c1:integer):integer;
+begin
+    return c4;
+end
+
+
+
+procedure main(); 
+var c1:integer;
+    c2:real;
+    c3:string;
+begin
+ 
+end

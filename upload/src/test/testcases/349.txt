@@ -1,0 +1,10 @@
+procedure main();
+                    var
+                    radius, area : real;
+                    begin
+                    radius := 3333;
+                    putstring("The area is ");
+                    area := PI * radius * radius;
+                    
+                    end
+                

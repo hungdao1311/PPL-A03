@@ -1,0 +1,17 @@
+
+                var a,b: integer;
+                procedure main();
+                var
+                    a: integer;
+                begin
+                    a := abc();
+                end
+                
+                procedure abc();
+                var
+                    a: integer;
+                begin
+                    a := a+c;
+                end
+                var c : integer;
+                

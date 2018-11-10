@@ -1,0 +1,19 @@
+
+                var a: real;
+                procedure main();
+                var i,j:real;
+                k:boolean;
+                a:string;
+                b:array[1 .. 5] of integer;
+                d:string;
+                begin
+                i := foo(b[6],b,b);
+                i := foo(b[3],b,b)*3+4-5 div 6;
+
+                end
+                function foo(a:real;b,c:array[1 .. 5] of integer):integer;
+                var b:array[1 .. 5] of integer;
+                begin
+                return a[3];
+                end
+            
